@@ -1,136 +1,56 @@
-import { connect } from "@/dbConfig/dbConfig";
-import { getDataFromToken } from "@/helpers/getDataFromToken";
-import mongoose from "mongoose";
-import Grid from "gridfs-stream";
-import { NextRequest, NextResponse } from "next/server";
-import multer from "multer";
-import { Readable } from "stream";
-import Video from "@/models/videoModel";
-import crypto from "crypto";
-import path from "path";
-import GridFsStorage from "multer-gridfs-storage";
-// import { Db } from "mongodb";
+import { NextResponse } from "next/server";
+import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 
-// MongoDB connection
-let gfs: any;
-let gridfsBucket: any;
+// Create an S3 client
+const s3Client = new S3Client({
+  region: process.env.NEXT_PUBLIC_AWS_S3_REGION as string,
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY as string,
+  },
+  endpoint: https://s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com, // Ensure the correct endpoint
+});
 
-async function initGridFS() {
-  const connection = mongoose.connection;
+// Function to upload file to S3
+async function uploadFileToS3(fileBuffer: Buffer, fileName: string): Promise<string> {
+  const params: PutObjectCommandInput = {
+    Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME as string,
+    Key: ${ fileName }-${ Date.now() },
+  Body: fileBuffer,
+    ContentType: 'image/jpeg', // Adjust this based on the file type
+      ACL: 'public-read', // Ensure correct ACL
+  };
 
-  // Ensure the connection is ready before accessing the DB
-  if (connection.readyState !== 1) {
-    await new Promise<void>((resolve, reject) => {
-      connection.once("open", resolve);
-      connection.on("error", reject);
-    });
-  }
+// Log the params to ensure they are correct
+console.log("S3 upload parameters:", params);
 
-  // Check if GridFS has already been initialized
-  if (!gfs && connection.db) {
-    const db = connection.getClient().db(); // Get the MongoDB Db instance
-    gridfsBucket = new mongoose.mongo.GridFSBucket(db, {
-      bucketName: "uploads",
-    });
-    gfs = Grid(connection.db, mongoose.mongo);
-    gfs.collection("uploads"); // Define the collection for GridFS
-  }
+const command = new PutObjectCommand(params);
+
+try {
+  await s3Client.send(command);
+  return https://${params.Bucket}.s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com/${params.Key};
+} catch (err) {
+  console.error("Error uploading to S3:", err); // Log detailed error
+  throw new Error(S3 upload failed); // Throw error with detailed message
+}
 }
 
-const storage = new GridFsStorage({
-  url: process.env.MONGO_URL!,
-  file: (req: any, file: any) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString("hex") + path.extname(file.originalname);
-        const fileInfo = { filename: filename, bucketName: "uploads" };
-        resolve(fileInfo);
-      });
-    });
-  },
-});
-const upload = multer({ storage });
-
-export async function POST(request: NextRequest) {
+// POST handler for file upload
+export async function POST(request: Request) {
   try {
-    await connect(); // Connect to the DB
-    await initGridFS(); // Initialize GridFS
-
-    const userId = await getDataFromToken(request);
-    if (!userId) {
-      return NextResponse.json({ error: "User not found" }, { status: 400 });
-    }
-
     const formData = await request.formData();
-    const videoName = formData.get("videoName") as string;
-    const videoFile = formData.get("videoFile") as File;
+    const file = formData.get("file") as File | null;
 
-    if (!videoName || !videoFile) {
-      return NextResponse.json(
-        { error: "Please provide videoName and videoFile" },
-        { status: 400 }
-      );
+    if (!file) {
+      return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
 
-    if (!gfs) {
-      throw new Error("GridFS not initialized");
-    }
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const fileUrl = await uploadFileToS3(buffer, file.name);
 
-    const buffer = await videoFile.arrayBuffer();
-    const fileStream = Readable.from(Buffer.from(buffer));
-
-    // Create a write stream for GridFS
-    const uploadStream = gridfsBucket.openUploadStream(videoName, {
-      metadata: { userId },
-    });
-    fileStream.pipe(uploadStream);
-
-    return new Promise<NextResponse>((resolve, reject) => {
-      uploadStream.on("finish", async () => {
-        const fileId = uploadStream.id.toString();
-
-        const newVideo = new Video({
-          videoName,
-          videoFile: fileId,
-          Likes: 0,
-          Tags: [],
-          Comments: [],
-          UserId: userId,
-        });
-
-        try {
-          const savedVideo = await newVideo.save();
-          resolve(
-            NextResponse.json({
-              message: "Video uploaded successfully",
-              success: true,
-              savedVideo,
-            })
-          );
-        } catch (saveError) {
-          reject(
-            NextResponse.json(
-              { error: "Failed to save video" },
-              { status: 500 }
-            )
-          );
-        }
-      });
-
-      uploadStream.on("error", (err: any) => {
-        reject(
-          NextResponse.json(
-            { error: "Failed to upload video" },
-            { status: 500 }
-          )
-        );
-      });
-    });
-  } catch (error: any) {
-    console.log(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, fileUrl });
+  } catch (error) {
+    console.error("Error in POST handler:", error); // Log errors in POST handler
+    return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
   }
 }
