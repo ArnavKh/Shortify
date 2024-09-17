@@ -94,9 +94,9 @@ export default function Home() {
       <div className="flex justify-between w-full p-4 bg-gray-900">
         <div className="flex items-center">
           <Image
-            src="/logo.svg" // Replace with your logo or YouTube-like logo
+            src="/Logo.png" // Replace with your logo or YouTube-like logo
             alt="Logo"
-            width={100}
+            width={50}
             height={50}
           />
         </div>
