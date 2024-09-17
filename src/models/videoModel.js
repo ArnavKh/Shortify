@@ -7,9 +7,8 @@ const VideoSchema = new mongoose.Schema({
         required: [true, "Please enter the video name"],
     },
     VideoFile: {
-        type: mongoose.Schema.Types.ObjectId, // Storing GridFS ObjectId
-        ref: 'uploads.files', // Refers to the GridFS bucket
-        required: [true, "Choose a file"],
+        type: String,
+        required: [true, "link is mandatory"],
     },
     Likes: {
         type: Number,
