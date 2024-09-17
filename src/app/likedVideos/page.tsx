@@ -6,9 +6,9 @@ interface Video {
   id: string;
   Videoname: string;
   VideoFile: string;
-  thumbnail: string; // Assuming you might want to add this field, though not present in your model
-  description: string;
-  Tags: string[]; // Adding Tags as an array of strings
+  thumbnail?: string; // Made optional as it's not in your model
+  description?: string; // Made optional as it's not in your model
+  Tags?: string[]; // Made optional
 }
 
 export default function LikedVideos() {
@@ -20,6 +20,7 @@ export default function LikedVideos() {
     const fetchLikedVideos = async () => {
       try {
         const response = await axios.get("/api/users/likedVideos");
+        console.log("Fetched videos:", response.data.videos); // Log the data to check structure
         setLikedVideos(response.data.videos);
         setLoading(false);
       } catch (error) {
@@ -43,14 +44,13 @@ export default function LikedVideos() {
           {likedVideos.map((video) => (
             <div key={video.id} className="bg-gray-800 rounded-lg shadow-md">
               <img
-                src={video.thumbnail} // Assuming you have a thumbnail
                 alt={video.Videoname}
                 className="w-full h-48 object-cover rounded-t-lg"
               />
               <div className="p-4">
                 <h2 className="text-xl font-semibold">{video.Videoname}</h2>
-                <p className="text-gray-400">{video.description}</p>
-                <p className="text-gray-400">Tags: {video.Tags.join(", ")}</p>
+                <p className="text-gray-400">{video.description || 'No description available'}</p>
+                <p className="text-gray-400">Tags: {video.Tags?.length ? video.Tags.join(", ") : 'No tags available'}</p>
                 <a
                   href={video.VideoFile}
                   className="text-blue-500 hover:underline"

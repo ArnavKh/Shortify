@@ -4,7 +4,8 @@ import User from "@/models/userModel";
 import Video from "@/models/videoModel";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
-export default async function handler(request: NextRequest) {
+// Named export for GET request
+export async function GET(request: NextRequest) {
   await connect(); // Connect to the MongoDB database
 
   try {
@@ -27,7 +28,7 @@ export default async function handler(request: NextRequest) {
     }
 
     // Fetch the videos that are in the likedVideos array
-    const likedVideos = await Video.find({ _id: { $in: user.likedVideos } });
+    const likedVideos = user.likedVideos;
 
     return NextResponse.json({ videos: likedVideos }, { status: 200 });
   } catch (error) {

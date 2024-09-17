@@ -15,6 +15,7 @@ interface Video {
   Likes: number;
   CommentsEnglish: string[];
   CommentsHindi: string[];
+  UserLiked: boolean; // New field to track if the user liked the video
 }
 
 export default function Home() {
@@ -39,12 +40,14 @@ export default function Home() {
   }, []);
 
   // Handle like/dislike functionality
-  const toggleLike = async (videoId: string, liked: boolean) => {
+  const toggleLike = async (videoId: string, currentlyLiked: boolean) => {
     try {
-      const updatedVideo = await axios.post(`/api/videos/${videoId}/like`, { liked });
+      const updatedVideo = await axios.post(`/api/users/like`, { videoId, liked: !currentlyLiked });
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
-          video._id === videoId ? { ...video, Likes: updatedVideo.data.likes } : video
+          video._id === videoId
+            ? { ...video, Likes: updatedVideo.data.likes, UserLiked: !currentlyLiked }
+            : video
         )
       );
     } catch (error) {
@@ -138,16 +141,10 @@ export default function Home() {
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{video.Videoname}</h2>
                   <button
-                    onClick={() => toggleLike(video._id, true)}
-                    className="px-4 py-2 bg-blue-500 rounded-md text-white mr-2"
+                    onClick={() => toggleLike(video._id, video.UserLiked)}
+                    className={`px-4 py-2 rounded-md text-white mr-2 ${video.UserLiked ? 'bg-red-500' : 'bg-blue-500'}`}
                   >
-                    Like ({video.Likes})
-                  </button>
-                  <button
-                    onClick={() => toggleLike(video._id, false)}
-                    className="px-4 py-2 bg-red-500 rounded-md text-white"
-                  >
-                    Dislike
+                    {video.UserLiked ? 'Dislike' : 'Like'}
                   </button>
 
                   <div className="mt-4">
