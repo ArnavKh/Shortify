@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import { getSession } from "next-auth/react"; // Import getSession from next-auth
+import { getDataFromToken } from "@/helpers/getDataFromToken";
 
 // Create an S3 client
 const s3Client = new S3Client({
@@ -18,7 +18,8 @@ async function uploadFileToS3(
   fileName: string,
   contentType: string,
   videoName: string,
-  tags: string
+  tags: string,
+  userId:string
 ): Promise<string> {
   const params: PutObjectCommandInput = {
     Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME as string,
@@ -29,6 +30,7 @@ async function uploadFileToS3(
     Metadata: {
       videoName: videoName, // Custom metadata
       tags: tags,
+      userId:userId,
     },
   };
 
@@ -47,12 +49,13 @@ async function uploadFileToS3(
 }
 
 // POST handler for file upload
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const videoFile = formData.get("videoFile") as File | null; // Adjusted to match form field name
     const videoName = formData.get("videoName") as string;
     const tags = formData.get("tags") as string;
+    const userId = await getDataFromToken(request);
 
     if (!videoFile) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
@@ -62,8 +65,8 @@ export async function POST(request: Request) {
     const contentType = videoFile.type || 'application/octet-stream'; // Default to binary stream if MIME type is not available
 
     const buffer = Buffer.from(await videoFile.arrayBuffer());
-    const fileUrl = await uploadFileToS3(buffer, videoFile.name, contentType, videoName, tags);
-
+    const fileUrl = await uploadFileToS3(buffer, videoFile.name, contentType, videoName, tags,userId);
+    
     return NextResponse.json({ success: true, fileUrl });
   } catch (error) {
     console.error("Error in POST handler:", error); // Log errors in POST handler
