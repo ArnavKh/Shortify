@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
+import Video from "@/models/videoModel"; 
+import {connect} from "@/dbConfig/dbConfig"; 
+import User from "@/models/userModel"
 
 // Create an S3 client
 const s3Client = new S3Client({
@@ -9,7 +12,7 @@ const s3Client = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID as string,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY as string,
   },
-  endpoint: `https://s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com`, // Ensure the correct endpoint
+  endpoint: `https://s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com`, // Ensure correct endpoint
 });
 
 // Function to upload file to S3
@@ -19,23 +22,20 @@ async function uploadFileToS3(
   contentType: string,
   videoName: string,
   tags: string,
-  userId:string
+  userId: string
 ): Promise<string> {
   const params: PutObjectCommandInput = {
     Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME as string,
-    Key: `${fileName}-${Date.now()}`,
+    Key: `videos/${Date.now()}_${fileName}`, // Organize files in an S3 folder
     Body: fileBuffer,
-    ContentType: 'video/mp4', // Set the correct MIME type
-    ACL: 'public-read', // Ensure correct ACL
+    ContentType: contentType, // Set correct MIME type
+    ACL: 'public-read', // Ensure public access to the file URL
     Metadata: {
-      videoName: videoName, // Custom metadata
-      tags: tags,
-      userId:userId,
+      videoName, // Custom metadata
+      tags,
+      userId,
     },
   };
-
-  // Log the params to ensure they are correct
-  console.log("S3 upload parameters:", params);
 
   const command = new PutObjectCommand(params);
 
@@ -44,32 +44,58 @@ async function uploadFileToS3(
     return `https://${params.Bucket}.s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com/${params.Key}`;
   } catch (err) {
     console.error("Error uploading to S3:", err); // Log detailed error
-    throw new Error(`S3 upload failed`); // Throw error with detailed message
+    throw new Error("S3 upload failed");
   }
 }
 
-// POST handler for file upload
+// POST handler for video file upload
 export async function POST(request: NextRequest) {
   try {
+    // Connect to MongoDB
+    await connect();
+
+    // Get form data from the request
     const formData = await request.formData();
-    const videoFile = formData.get("videoFile") as File | null; // Adjusted to match form field name
+    const videoFile = formData.get("videoFile") as File | null;
     const videoName = formData.get("videoName") as string;
     const tags = formData.get("tags") as string;
+
+    // Get the userId from the token (assumed to be provided by getDataFromToken)
     const userId = await getDataFromToken(request);
 
-    if (!videoFile) {
-      return NextResponse.json({ error: "File is required" }, { status: 400 });
+    // Validate file input
+    if (!videoFile || !videoName || !tags) {
+      return NextResponse.json({ error: "Video file, name, and tags are required" }, { status: 400 });
     }
 
-    // Get the MIME type of the video file
-    const contentType = videoFile.type || 'application/octet-stream'; // Default to binary stream if MIME type is not available
-
-    const buffer = Buffer.from(await videoFile.arrayBuffer());
-    const fileUrl = await uploadFileToS3(buffer, videoFile.name, contentType, videoName, tags,userId);
+    // Determine MIME type
+    const contentType = videoFile.type || 'application/octet-stream'; // Default to binary stream if no MIME type
     
-    return NextResponse.json({ success: true, fileUrl });
+    // Convert file to buffer
+    const buffer = Buffer.from(await videoFile.arrayBuffer());
+
+    // Upload file to S3 and retrieve the file URL
+    const fileUrl = await uploadFileToS3(buffer, videoFile.name, contentType, videoName, tags, userId);
+
+    // Save video metadata and S3 URL to MongoDB
+    const newVideo = new Video({
+      Videoname: videoName,
+      VideoFile: fileUrl, // S3 URL of the uploaded file
+      Tags: tags.split(","), // Split tags by comma into an array
+      UserId: userId, // User who uploaded the video
+    });
+
+    await newVideo.save(); // Save video document in MongoDB
+
+    // Append video URL to user's uploadedVideos
+    await User.findByIdAndUpdate(userId, {
+      $push: { uploadedVideos: fileUrl }
+    });
+
+    // Return success response with the file URL and metadata
+    return NextResponse.json({ success: true, fileUrl, video: newVideo });
   } catch (error) {
-    console.error("Error in POST handler:", error); // Log errors in POST handler
-    return NextResponse.json({ error: "Error uploading file"}, { status: 500 });
+    console.error("Error in POST handler:", error); // Log error details
+    return NextResponse.json({ error: "Error uploading file and saving to database" }, { status: 500 });
   }
 }
