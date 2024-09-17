@@ -41,12 +41,12 @@ export default function SignupPage() {
     return (
         <div className="flex font-textFont transition-all duration-500">
             {/* Left subsection for graphics */}
-            <div className="myGradient md:w-[30%] lg:w-[50%] hidden md:block">
+            <div className="myGradient md:w-[40%] lg:w-[50%] hidden md:block">
                 <img src="/DoodleGraphic.svg" alt="" className="h-full object-cover" />
             </div>
 
             {/* Right Subsection for login */}
-            <div className="flex flex-col items-start justify-center min-h-screen bg-primary w-full md:w-[70%] lg:w-[50%]">
+            <div className="flex flex-col items-start justify-center min-h-screen bg-primary w-full md:w-[60%] lg:w-[50%]">
 
                 {/* Logo */}
                 <div className="mx-auto my-8 lg:mx-16 h-32 w-32">
