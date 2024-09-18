@@ -1,65 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
-import Video from "@/models/videoModel";
 import User from "@/models/userModel";
+import Video from "@/models/videoModel";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
+// Named export for POST request
 export async function POST(request: NextRequest) {
+  await connect(); // Connect to the MongoDB database
+
   try {
-    await connect();
-
-    // Get request data
     const { videoId } = await request.json();
-
-    if (!videoId) {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-    }
-
-    // Get user ID from the token
     const userId = await getDataFromToken(request);
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
+      return NextResponse.json({
+        message: "UserId not found",
+        status: 400,
+      });
     }
 
-    // Find the video and user
-    const video = await Video.findById(videoId);
-    if (!video) {
-      return NextResponse.json({ error: "Video not found" }, { status: 404 });
-    }
-
+    // Fetch user and video
     const user = await User.findById(userId);
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const video = await Video.findById(videoId);
+
+    if (!user || !video) {
+      return NextResponse.json({
+        message: "User or Video not found",
+        status: 400,
+      });
     }
 
-    // Check if the video is already liked by the user
-    const isLiked = user.likedVideos.includes(video.VideoFile);
-
-    if (isLiked) {
-      // User is trying to dislike the video
-      video.Likes -= 1; // Decrement Likes
-      user.likedVideos = user.likedVideos.filter(
-        (url: string) => url !== video.VideoFile
-      ); // Remove URL from likedVideos
+    // Toggle like status
+    let likes;
+    if (user.likedVideos.includes(video.VideoFile)) {
+      // Remove from likedVideos
+      user.likedVideos = user.likedVideos.filter((url:string) => url !== video.VideoFile);
+      likes = video.Likes - 1;
     } else {
-      // User is trying to like the video
-      video.Likes += 1; // Increment Likes
-      user.likedVideos.push(video.VideoFile); // Add URL to likedVideos
+      // Add to likedVideos
+      user.likedVideos.push(video.VideoFile);
+      likes = video.Likes + 1;
     }
 
-    // Save updates to video and user
-    await video.save();
+    // Update video likes and user likedVideos
     await user.save();
+    await Video.findByIdAndUpdate(videoId, { Likes: likes });
 
-    return NextResponse.json({ likes: video.Likes });
+    console.log("Updated likes:", likes); // Log to verify data
+
+    return NextResponse.json({ likes }, { status: 200 });
   } catch (error) {
-    console.error("Error handling like/dislike:", error);
+    console.error("Error updating like status:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { message: "Internal Server Error", status: 500 },
       { status: 500 }
     );
   }
