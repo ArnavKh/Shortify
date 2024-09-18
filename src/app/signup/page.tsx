@@ -65,7 +65,7 @@ export default function SignupPage() {
                             id="username"
                             value={user.username}
                             onChange={(e) => setUser({ ...user, username: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
                         />
                     </div>
                     <div className="mb-4">
@@ -75,7 +75,7 @@ export default function SignupPage() {
                             id="email"
                             value={user.email}
                             onChange={(e) => setUser({ ...user, email: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
                         />
                     </div>
                     <div className="mb-4">
@@ -85,7 +85,7 @@ export default function SignupPage() {
                             id="password"
                             value={user.password}
                             onChange={(e) => setUser({ ...user, password: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
                         />
                     </div>
                     <button
@@ -93,7 +93,7 @@ export default function SignupPage() {
                         disabled={buttonDisabled}
                         className={`w-full p-3 my-6 text-white rounded-md ${buttonDisabled
                             ? "bg-secondary cursor-not-allowed"
-                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] active:scale-95"}`}
+                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] active:scale-95 focus:outline-none"}`}
                     >
                         {loading ? "Signing Up..." : "Sign Up"}
                     </button>

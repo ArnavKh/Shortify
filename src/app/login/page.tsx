@@ -56,18 +56,18 @@ export default function LoginPage() {
 
                 {/* Login / Signup Box */}
                 <div className=" py-12 px-16 shadow-primary w-full lg:w-auto text-left">
-                    <h1 className="text-3xl font-bold mb-6 text-start text-white font-t">
+                    <h1 className="text-3xl font-bold mb-6 text-start text-white">
                         {loading ? "Processing..." : <>Log In to <span className="myGradient inline-block text-transparent bg-clip-text">Shortify</span></>}
                     </h1>
 
                     <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-300 text-sm font-medium w-full mb-2 focus:bg-red-500">Email</label>
+                        <label htmlFor="email" className="block text-gray-300 text-sm font-medium w-full mb-2">Email</label>
                         <input
                             type="text"
                             id="email"
                             value={user.email}
                             onChange={(e) => setUser({ ...user, email: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]  focus:outline-none"
                         />
                     </div>
                     <div className="mb-4">
@@ -77,7 +77,7 @@ export default function LoginPage() {
                             id="password"
                             value={user.password}
                             onChange={(e) => setUser({ ...user, password: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300  bg-secondary lg:w-[28rem]"
+                            className="w-full p-2 border-b-2 border-gray-300  bg-secondary lg:w-[28rem] focus:outline-none"
                         />
                     </div>
 
@@ -86,7 +86,7 @@ export default function LoginPage() {
                         disabled={buttonDisabled}
                         className={`w-full p-3 my-6 text-white rounded-md ${buttonDisabled
                             ? "bg-secondary cursor-not-allowed"
-                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] active:scale-95"
+                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] active:scale-95 focus:outline-none"
                             }`}
                     >
                         {loading ? "Logging in..." : "Login"}
