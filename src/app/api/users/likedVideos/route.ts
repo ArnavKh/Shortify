@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
-import Video from "@/models/videoModel";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
 // Named export for GET request
@@ -17,9 +16,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Fetch the user to get their likedVideos array
+    // Fetch the user and retrieve their likedVideos array
     const user = await User.findById(userId);
-
     if (!user) {
       return NextResponse.json({
         message: "User not found",
@@ -27,9 +25,12 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Fetch the videos that are in the likedVideos array
+    // Assuming likedVideos is an array of AWS S3 links
     const likedVideos = user.likedVideos;
 
+    console.log("Liked videos:", likedVideos); // Log to verify data
+
+    // Return the likedVideos array
     return NextResponse.json({ videos: likedVideos }, { status: 200 });
   } catch (error) {
     console.error("Error fetching liked videos:", error);
