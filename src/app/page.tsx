@@ -119,9 +119,6 @@ export default function Home() {
           <Link href="/likedVideos">
             <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Liked Videos</button>
           </Link>
-          <Link href="/uploadVideo">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Upload Videos</button>
-          </Link>
         </nav>
       </div>
 
