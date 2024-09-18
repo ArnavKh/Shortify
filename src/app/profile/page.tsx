@@ -18,7 +18,7 @@ export default function ProfilePage() {
     useEffect(()=>{
         async function fetchUsername() {
             try{
-                const response = await axios.post("/api/users/getUsername")
+                const response = await axios.post("/api/users/getUserdata")
                 setusername(response.data.username)
             }catch(error){
                 console.error("Error fetching username: ",error)
