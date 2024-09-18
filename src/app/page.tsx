@@ -8,13 +8,18 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 // Video interface
+interface Comment {
+  username: string;
+  comment: string;
+}
+
 interface Video {
   _id: string;
   Videoname: string;
   VideoFile: string; // AWS URL
   Likes: number;
-  CommentsEnglish: string[];
-  CommentsHindi: string[];
+  CommentsEnglish: Comment[];
+  CommentsHindi: Comment[];
 }
 
 export default function Home() {
@@ -178,14 +183,14 @@ export default function Home() {
 
                     <ul className="mt-2">
                       {selectedLanguage === "English"
-                        ? video.CommentsEnglish.map((comment, index) => (
+                        ? video.CommentsEnglish.map((commentObj, index) => (
                             <li key={index} className="text-gray-400">
-                              {comment}
+                              {commentObj.username}:{commentObj.comment}
                             </li>
                           ))
-                        : video.CommentsHindi.map((comment, index) => (
+                        : video.CommentsHindi.map((commentObj, index) => (
                             <li key={index} className="text-gray-400">
-                              {comment}
+                              {commentObj.username}:{commentObj.comment}
                             </li>
                           ))}
                     </ul>
@@ -195,7 +200,7 @@ export default function Home() {
                       placeholder={`Add a comment in ${selectedLanguage}`}
                       className="bg-gray-700 text-white p-2 rounded w-full mt-2"
                       value={commentTexts[video._id] || ""}
-                      onChange={(e) => setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))}
+                      onChange={(e) => setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))} 
                     />
                     <button
                       onClick={() => {
