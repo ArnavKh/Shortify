@@ -68,7 +68,7 @@ export default function ProfilePage() {
           <Link href="/content">
             <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Content</button>
           </Link>
-          <Link href="/trending">
+          <Link href="/analytics">
             <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Analytics</button>
           </Link>
         </nav>
