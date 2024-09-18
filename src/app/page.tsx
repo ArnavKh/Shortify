@@ -23,6 +23,7 @@ export default function Home() {
   const [likedVideoUrls, setLikedVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedLanguage, setSelectedLanguage] = useState<"English" | "Hindi">("English");
+  const [commentTexts, setCommentTexts] = useState<{ [videoId: string]: string }>({});
 
   // Fetch videos and liked videos from the database
   useEffect(() => {
@@ -76,10 +77,11 @@ export default function Home() {
   const addComment = async (videoId: string, comment: string) => {
     try {
       const commentData = {
+        videoId, // Add videoId to request body
         comment,
         language: selectedLanguage,
       };
-      const updatedVideo = await axios.post(`/api/videos/${videoId}/comment`, commentData);
+      const updatedVideo = await axios.post(`/api/users/comment`, commentData); // Use the updated API endpoint
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
           video._id === videoId
@@ -89,6 +91,7 @@ export default function Home() {
             : video
         )
       );
+      setCommentTexts((prev) => ({ ...prev, [videoId]: "" })); // Clear the comment input for the specific video
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -161,7 +164,7 @@ export default function Home() {
                     onClick={() => toggleLike(video._id, video.VideoFile)}
                     className={`px-4 py-2 rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? 'bg-red-500' : 'bg-blue-500'}`}
                   >
-                    {likedVideoUrls.includes(video.VideoFile) ? 'Dislike' : 'Like'}
+                    {likedVideoUrls.includes(video.VideoFile) ? 'Unlike' : 'Like'}
                   </button>
 
                   <div className="mt-4">
@@ -193,14 +196,20 @@ export default function Home() {
                       type="text"
                       placeholder={`Add a comment in ${selectedLanguage}`}
                       className="bg-gray-700 text-white p-2 rounded w-full mt-2"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          const comment = (e.target as HTMLInputElement).value;
+                      value={commentTexts[video._id] || ""}
+                      onChange={(e) => setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => {
+                        const comment = commentTexts[video._id];
+                        if (comment.trim()) {
                           addComment(video._id, comment);
-                          (e.target as HTMLInputElement).value = "";
                         }
                       }}
-                    />
+                      className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                    >
+                      Submit Comment
+                    </button>
                   </div>
                 </div>
               </div>
