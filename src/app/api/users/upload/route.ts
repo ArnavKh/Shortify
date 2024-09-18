@@ -12,7 +12,7 @@ const s3Client = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID as string,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY as string,
   },
-  endpoint: `https://s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com`, // Ensure correct endpoint
+  endpoint: `http://s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com`, // Ensure correct endpoint
 });
 
 // Function to upload file to S3
@@ -41,7 +41,7 @@ async function uploadFileToS3(
 
   try {
     await s3Client.send(command);
-    return `https://${params.Bucket}.s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com/${params.Key}`;
+    return `http://${params.Bucket}.s3.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.amazonaws.com/${params.Key}`;
   } catch (err) {
     console.error("Error uploading to S3:", err); // Log detailed error
     throw new Error("S3 upload failed");
