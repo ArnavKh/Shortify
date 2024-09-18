@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching liked videos:", error);
     return NextResponse.json(
-      { message: "Internal server error" },
+      { message: "Internal Server Error", status: 500 },
       { status: 500 }
     );
   }

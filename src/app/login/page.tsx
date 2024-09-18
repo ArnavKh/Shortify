@@ -61,7 +61,7 @@ export default function LoginPage() {
                     </h1>
 
                     <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-300 text-sm font-medium w-full mb-2">Email</label>
+                        <label htmlFor="email" className="block text-gray-300 text-sm font-medium w-full mb-2 focus:bg-red-500">Email</label>
                         <input
                             type="text"
                             id="email"

@@ -15,40 +15,58 @@ interface Video {
   Likes: number;
   CommentsEnglish: string[];
   CommentsHindi: string[];
-  UserLiked: boolean; // New field to track if the user liked the video
 }
 
 export default function Home() {
   const router = useRouter();
   const [videos, setVideos] = useState<Video[]>([]);
+  const [likedVideoUrls, setLikedVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedLanguage, setSelectedLanguage] = useState<"English" | "Hindi">("English");
+  const [commentTexts, setCommentTexts] = useState<{ [videoId: string]: string }>({});
 
-  // Fetch videos from the database
+  // Fetch videos and liked videos from the database
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchVideosAndLikedStatus = async () => {
       try {
-        const response = await axios.get("/api/users/videos"); // Your API to get all videos
-        setVideos(response.data.videos);
+        // Fetch all videos
+        const videoResponse = await axios.get("/api/users/videos");
+        console.log("Fetched videos:", videoResponse.data.videos);
+        setVideos(videoResponse.data.videos);
+
+        // Fetch liked videos of the user (URLs)
+        const likedVideosResponse = await axios.get("/api/users/likedVideos");
+        console.log("Fetched liked videos:", likedVideosResponse.data.videos);
+        setLikedVideoUrls(likedVideosResponse.data.videos || []);
+
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching videos:", error);
+        console.error("Error fetching videos or liked videos:", error);
         setLoading(false);
       }
     };
-    fetchVideos();
+    fetchVideosAndLikedStatus();
   }, []);
 
   // Handle like/dislike functionality
-  const toggleLike = async (videoId: string, currentlyLiked: boolean) => {
+  const toggleLike = async (videoId: string, videoFileUrl: string) => {
     try {
-      const updatedVideo = await axios.post(`/api/users/like`, { videoId, liked: !currentlyLiked });
+      const response = await axios.post(`/api/users/like`, { videoId });
+      console.log("Like response:", response.data);
+
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
           video._id === videoId
-            ? { ...video, Likes: updatedVideo.data.likes, UserLiked: !currentlyLiked }
+            ? { ...video, Likes: response.data.likes }
             : video
         )
+      );
+
+      // Update liked videos state
+      setLikedVideoUrls((prev) =>
+        prev.includes(videoFileUrl)
+          ? prev.filter((url) => url !== videoFileUrl) // Remove URL if already liked
+          : [...prev, videoFileUrl] // Add URL if not liked
       );
     } catch (error) {
       console.error("Error updating likes:", error);
@@ -59,10 +77,11 @@ export default function Home() {
   const addComment = async (videoId: string, comment: string) => {
     try {
       const commentData = {
+        videoId, // Add videoId to request body
         comment,
         language: selectedLanguage,
       };
-      const updatedVideo = await axios.post(`/api/videos/${videoId}/comment`, commentData);
+      const updatedVideo = await axios.post(`/api/users/comment`, commentData); // Use the updated API endpoint
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
           video._id === videoId
@@ -72,6 +91,7 @@ export default function Home() {
             : video
         )
       );
+      setCommentTexts((prev) => ({ ...prev, [videoId]: "" })); // Clear the comment input for the specific video
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -139,10 +159,10 @@ export default function Home() {
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{video.Videoname}</h2>
                   <button
-                    onClick={() => toggleLike(video._id, video.UserLiked)}
-                    className={`px-4 py-2 rounded-md text-white mr-2 ${video.UserLiked ? 'bg-red-500' : 'bg-blue-500'}`}
+                    onClick={() => toggleLike(video._id, video.VideoFile)}
+                    className={`px-4 py-2 rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? 'bg-red-500' : 'bg-blue-500'}`}
                   >
-                    {video.UserLiked ? 'Dislike' : 'Like'}
+                    {likedVideoUrls.includes(video.VideoFile) ? 'Unlike' : 'Like'}
                   </button>
 
                   <div className="mt-4">
@@ -174,14 +194,20 @@ export default function Home() {
                       type="text"
                       placeholder={`Add a comment in ${selectedLanguage}`}
                       className="bg-gray-700 text-white p-2 rounded w-full mt-2"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          const comment = (e.target as HTMLInputElement).value;
+                      value={commentTexts[video._id] || ""}
+                      onChange={(e) => setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => {
+                        const comment = commentTexts[video._id];
+                        if (comment.trim()) {
                           addComment(video._id, comment);
-                          (e.target as HTMLInputElement).value = "";
                         }
                       }}
-                    />
+                      className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                    >
+                      Submit Comment
+                    </button>
                   </div>
                 </div>
               </div>
