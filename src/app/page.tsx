@@ -115,9 +115,10 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-black text-white p-6">
+    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont">
+      
       {/* Header */}
-      <div className="flex justify-between w-full p-4 bg-gray-900">
+      <div className="flex justify-between w-full p-4 bg-primary">
         <div className="flex items-center">
           <Image
             src="/Logo.png" // Replace with your logo or YouTube-like logo
@@ -128,21 +129,21 @@ export default function Home() {
         </div>
         <nav className="flex space-x-8">
           <Link href="/profile">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Profile</button>
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Profile</button>
           </Link>
           <div>
             <button
               onClick={onLogout}
-              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+              className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]"
             >
               Logout
             </button>
           </div>
           <Link href="/trending">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Trending</button>
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Trending</button>
           </Link>
           <Link href="/likedVideos">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Liked Videos</button>
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Liked Videos</button>
           </Link>
         </nav>
       </div>
@@ -159,6 +160,8 @@ export default function Home() {
                 <video
                   src={video.VideoFile}
                   controls
+                  loop
+                  autoPlay
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
                 <div className="p-4">
