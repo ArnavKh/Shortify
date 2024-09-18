@@ -65,7 +65,7 @@ export default function SignupPage() {
                             id="username"
                             value={user.username}
                             onChange={(e) => setUser({ ...user, username: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none focus:border-[#F84E9D]    "
                         />
                     </div>
                     <div className="mb-4">
@@ -75,7 +75,7 @@ export default function SignupPage() {
                             id="email"
                             value={user.email}
                             onChange={(e) => setUser({ ...user, email: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none focus:border-[#F84E9D]"
                         />
                     </div>
                     <div className="mb-4">
@@ -85,7 +85,7 @@ export default function SignupPage() {
                             id="password"
                             value={user.password}
                             onChange={(e) => setUser({ ...user, password: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem] focus:outline-none focus:border-[#F84E9D]"
                         />
                     </div>
                     <button
@@ -99,7 +99,7 @@ export default function SignupPage() {
                     </button>
                     
                     <Link href="/login" className="block text-center mt-4 text-white">
-                        Already a user? <span className="underline myGradient inline-block text-transparent bg-clip-text">Log In</span>
+                        Already a user? <span className="underline myGradient inline-block text-transparent bg-clip-text hover:myGradientReverse font-bold">Log In</span>
                     </Link>
                 </div>
             </div>
