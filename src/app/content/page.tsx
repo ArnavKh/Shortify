@@ -100,6 +100,11 @@ export default function ProfilePage() {
               >
                 Delete
               </button>
+              <Link href={`/update/${video._id}`}>
+                    <button className="absolute bottom-2 right-2 px-2 py-1 bg-blue-600 rounded-md hover:bg-blue-500 text-white">
+                        Update
+                    </button>
+                </Link>
             </div>
           ))
         ) : (
