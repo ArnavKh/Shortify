@@ -1,56 +1,73 @@
 
 "use client"
-import React from "react"
+import React, { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import toast from "react-hot-toast"
 import Link from "next/link"
+import { getDataFromToken } from "@/helpers/getDataFromToken";
+import Image from "next/image";
+import Script from "next/script"
+import { NextRequest, NextResponse } from "next/server"
+import User from "@/models/userModel"
+
+
+
+
+
 
 export default function ProfilePage() {
-    
-
     const router = useRouter()
-
     const [data, setData] = React.useState("")
 
-    const onLogout = async () => {
-        try {
-            await axios.get("/api/users/logout")
-            toast.success("Logout successful")
-            router.push("/login")
-        } catch (error: any) {
-            console.error("Logout failed", error)
-            toast.error("Logout failed. Please try again.")
-        }
-    }
+    const [username, setusername] = React.useState("")
 
-    const getUserData = async() =>{
-        const response = await axios.get("/api/users/me")
-        console.log(response.data)
-        setData(response.data.data._id)
-    }
+
+    useEffect(()=>{
+        async function fetchUsername() {
+            try{
+                const response = await axios.post("/api/users/getUsername")
+                setusername(response.data.username)
+            }catch(error){
+                console.error("Error fetching username: ",error)
+                toast.error("Failed to fetch user data");
+            }
+        }
+        fetchUsername();
+    },[])
+    
+    
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-                <div className="flex flex-col items-center">
-                    <img
-                        // src={"user.profilePic"}
-                        alt="Profile Picture"
-                        className="w-24 h-24 rounded-full border-4 border-blue-500 mb-4"
+        <main className="flex min-h-screen flex-col items-center bg-black text-white">
+            {/* Header */}
+            <div className="flex justify-between w-full p-4 bg-gray-900">
+                <div className="flex items-center gap-5">
+                    <Image
+                        className="logo"
+                        src="/logo.svg" // Replace with your logo or YouTube-like logo
+                        alt="Logo"
+                        width={100}
+                        height={50}
+                        
                     />
-                    <h1 className="text-2xl font-bold mb-2 text-center text-black">{"user.username"}</h1>
-                    <p className="text-gray-700 mb-4 text-center">{"user.email"}</p>
+                    <h2>{username}</h2>
                 </div>
-                <h2>{data==="" ? "Nothing" : <Link href={`/profile/${data}`}>{data}</Link>}</h2>
-                <button onClick={getUserData} className="w-full p-2 mt-4 text-white rounded-lg bg-red-500 hover:bg-red-600">get User</button>
-                <button
-                    onClick={onLogout}
-                    className="w-full p-2 mt-4 text-white rounded-lg bg-red-500 hover:bg-red-600"
-                >
-                    Logout
-                </button>
+                <nav className="flex space-x-8">
+                    <Link href="/">
+                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Home</button>
+                    </Link>
+                    <Link href="/profile">
+                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">DashBoard</button>
+                    </Link>
+                    <Link href="/content">
+                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Content</button>
+                    </Link>
+                    <Link href="/trending">
+                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Analytics</button>
+                    </Link>
+                </nav>
             </div>
-        </div>
+        </main>  
     )
 }

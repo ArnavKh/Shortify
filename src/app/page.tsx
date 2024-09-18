@@ -76,6 +76,7 @@ export default function Home() {
       console.error("Error adding comment:", error);
     }
   };
+  
 
   const onLogout = async () => {
     try {
