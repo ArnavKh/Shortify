@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   // Add header
-  
   children,
   // Add Footer
 }: Readonly<{
