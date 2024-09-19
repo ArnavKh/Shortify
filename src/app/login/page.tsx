@@ -67,7 +67,7 @@ export default function LoginPage() {
                             id="email"
                             value={user.email}
                             onChange={(e) => setUser({ ...user, email: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]  focus:outline-none"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary lg:w-[28rem]  focus:outline-none focus:border-[#F84E9D]"
                         />
                     </div>
                     <div className="mb-4">
@@ -77,7 +77,7 @@ export default function LoginPage() {
                             id="password"
                             value={user.password}
                             onChange={(e) => setUser({ ...user, password: e.target.value })}
-                            className="w-full p-2 border-b-2 border-gray-300  bg-secondary lg:w-[28rem] focus:outline-none"
+                            className="w-full p-2 border-b-2 border-gray-300  bg-secondary lg:w-[28rem] focus:outline-none focus:border-[#F84E9D]"
                         />
                     </div>
 
@@ -93,11 +93,11 @@ export default function LoginPage() {
                     </button>
 
                     <Link href="/signup" className="block text-center mt-4 text-white">
-                        Not on Shortify? <span className="underline myGradient inline-block text-transparent bg-clip-text">Create an account</span>
+                        Not on Shortify? <span className="underline myGradient inline-block text-transparent bg-clip-text hover:myGradientReverse font-bold">Create an account</span>
                     </Link>
 
                     <Link href="/signup" className="block text-center mt-4 text-white">
-                        Forgot Password? <span className="underline myGradient inline-block text-transparent bg-clip-text">Reset</span>
+                        Forgot Password? <span className="underline myGradient inline-block text-transparent bg-clip-text hover:myGradientReverse font-bold">Reset</span>
                     </Link>
                 </div>
             </div>

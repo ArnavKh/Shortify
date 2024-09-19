@@ -17,5 +17,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/signup", "/profile", "/likedVideos", "/uploadVideo"],
+  matcher: [
+    "/",
+    "/login",
+    "/signup",
+    "/profile",
+    "/likedVideos",
+    "/content",
+    "/update",
+  ],
 };
