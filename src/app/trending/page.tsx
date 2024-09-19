@@ -8,15 +8,7 @@ import Footer from "../footer/footer";
 
 
 
-// Video interface
-interface Video {
-  _id: string;
-  Videoname: string;
-  VideoFile: string;
-  Likes: number;
-  CommentsEnglish: string[];
-  CommentsHindi: string[];
-}
+
 
 // Header Component
 const handleLogout = () => {
@@ -29,6 +21,16 @@ const handleLogout = () => {
 interface Comment {
   username: string;
   comment: string;
+}
+
+// Video interface
+interface Video {
+  _id: string;
+  Videoname: string;
+  VideoFile: string;
+  Likes: number;
+  CommentsEnglish: Comment[];
+  CommentsHindi: Comment[];
 }
 
 
