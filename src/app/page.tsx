@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -30,18 +30,57 @@ export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState<"English" | "Hindi">("English");
   const [commentTexts, setCommentTexts] = useState<{ [videoId: string]: string }>({});
 
-  // Fetch videos and liked videos from the database
+  const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({}); // Store references to videos
+  const [scrollAmount, setScrollAmount] = useState(1000); // Fixed scroll amount in pixels
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null); // Ref to the scrollable container
+  const isScrollingRef = useRef(false); // Ref to prevent multiple scrolls at once
+
   useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault(); // Prevent default scrolling behavior
+
+      if (isScrollingRef.current) return; // Prevent multiple scrolls at once
+      isScrollingRef.current = true;
+
+      const container = scrollContainerRef.current;
+      if (container) {
+        // Determine scroll direction
+        const scrollDirection = e.deltaY > 0 ? scrollAmount : -scrollAmount;
+
+        container.scrollBy({
+          top: scrollDirection,
+          behavior: "smooth", // Smooth scroll effect
+        });
+
+        // Set a timeout to allow the scroll to finish before accepting new scrolls
+        setTimeout(() => {
+          isScrollingRef.current = false;
+        }, 500); // Adjust the delay based on scroll behavior
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      // Attach the scroll listener
+      container.addEventListener("wheel", handleWheel as EventListener, { passive: false });
+    }
+
+    return () => {
+      if (container) {
+        // Clean up the listener
+        container.removeEventListener("wheel", handleWheel as EventListener);
+      }
+    };
+  }, [scrollAmount]);
+
+  useEffect(() => {
+    // Fetch videos and liked videos from the database
     const fetchVideosAndLikedStatus = async () => {
       try {
-        // Fetch all videos
         const videoResponse = await axios.get("/api/users/videos");
-        console.log("Fetched videos:", videoResponse.data.videos);
         setVideos(videoResponse.data.videos);
 
-        // Fetch liked videos of the user (URLs)
         const likedVideosResponse = await axios.get("/api/users/likedVideos");
-        console.log("Fetched liked videos:", likedVideosResponse.data.videos);
         setLikedVideoUrls(likedVideosResponse.data.videos || []);
 
         setLoading(false);
@@ -57,21 +96,16 @@ export default function Home() {
   const toggleLike = async (videoId: string, videoFileUrl: string) => {
     try {
       const response = await axios.post(`/api/users/like`, { videoId });
-      console.log("Like response:", response.data);
-
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
-          video._id === videoId
-            ? { ...video, Likes: response.data.likes }
-            : video
+          video._id === videoId ? { ...video, Likes: response.data.likes } : video
         )
       );
 
-      // Update liked videos state
       setLikedVideoUrls((prev) =>
         prev.includes(videoFileUrl)
-          ? prev.filter((url) => url !== videoFileUrl) // Remove URL if already liked
-          : [...prev, videoFileUrl] // Add URL if not liked
+          ? prev.filter((url) => url !== videoFileUrl)
+          : [...prev, videoFileUrl]
       );
     } catch (error) {
       console.error("Error updating likes:", error);
@@ -82,11 +116,11 @@ export default function Home() {
   const addComment = async (videoId: string, comment: string) => {
     try {
       const commentData = {
-        videoId, // Add videoId to request body
+        videoId,
         comment,
         language: selectedLanguage,
       };
-      const updatedVideo = await axios.post(`/api/users/comment`, commentData); // Use the updated API endpoint
+      const updatedVideo = await axios.post(`/api/users/comment`, commentData);
       setVideos((prevVideos) =>
         prevVideos.map((video) =>
           video._id === videoId
@@ -96,12 +130,11 @@ export default function Home() {
             : video
         )
       );
-      setCommentTexts((prev) => ({ ...prev, [videoId]: "" })); // Clear the comment input for the specific video
+      setCommentTexts((prev) => ({ ...prev, [videoId]: "" }));
     } catch (error) {
       console.error("Error adding comment:", error);
     }
   };
-  
 
   const onLogout = async () => {
     try {
@@ -109,68 +142,69 @@ export default function Home() {
       toast.success("Logout successful");
       router.push("/login");
     } catch (error: any) {
-      console.error("Logout failed", error);
       toast.error("Logout failed. Please try again.");
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont">
-      
+    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500">
       {/* Header */}
-      <div className="flex justify-between w-full p-4 bg-primary">
+      <div className="flex justify-between w-full p-4 bg-primary fixed z-50">
         <div className="flex items-center">
-          <Image
-            src="/Logo.png" // Replace with your logo or YouTube-like logo
-            alt="Logo"
-            width={50}
-            height={50}
-          />
+          <Image src="/Logo.png" alt="Logo" width={50} height={50} />
         </div>
         <nav className="flex space-x-8">
           <Link href="/profile">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Profile</button>
-          </Link>
-          <div>
-            <button
-              onClick={onLogout}
-              className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]"
-            >
-              Logout
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+              Profile
             </button>
-          </div>
+          </Link>
+          <Link href="">
+            <button onClick={onLogout} className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+              Log Out
+            </button>
+          </Link>
           <Link href="/trending">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Trending</button>
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+              Trending
+            </button>
           </Link>
           <Link href="/likedVideos">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">Liked Videos</button>
+            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+              Liked Videos
+            </button>
           </Link>
         </nav>
       </div>
 
       {/* Content */}
-      <div className="w-full max-w-7xl mt-8">
-        <h1 className="text-3xl font-bold mb-6">Recommended Videos</h1>
+      <div className="w-full h-full overflow-auto flex flex-col items-center mt-24">
         {loading ? (
           <p>Loading videos...</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="w-full max-w-screen-sm h-full flex flex-col items-center">
             {videos.map((video) => (
-              <div key={video._id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+              <div
+                key={video._id}
+                className="bg-secondary rounded-lg overflow-hidden shadow-lg mb-8 w-full h-[90vh] flex justify-center items-center"
+              >
                 <video
-                  src={video.VideoFile}
+                  ref={(el) => {
+                    videoRefs.current[video._id] = el; // Store reference without returning
+                  }}
                   controls
                   loop
-                  autoPlay
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="h-full w-auto max-w-full object-contain"
+                  src={video.VideoFile}
                 />
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{video.Videoname}</h2>
                   <button
                     onClick={() => toggleLike(video._id, video.VideoFile)}
-                    className={`px-4 py-2 rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? 'bg-red-500' : 'bg-blue-500'}`}
+                    className={`px-4 py-2 rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? "bg-red-500" : "bg-blue-500"
+                      }`}
                   >
-                    {likedVideoUrls.includes(video.VideoFile) ? 'Unlike' : 'Like'}
+                    {likedVideoUrls.includes(video.VideoFile) ? "Unlike" : "Like"}
                   </button>
 
                   <div className="mt-4">
@@ -187,15 +221,15 @@ export default function Home() {
                     <ul className="mt-2">
                       {selectedLanguage === "English"
                         ? video.CommentsEnglish.map((commentObj, index) => (
-                            <li key={index} className="text-gray-400">
-                              {commentObj.username}:{commentObj.comment}
-                            </li>
-                          ))
+                          <li key={index} className="text-gray-400">
+                            {commentObj.username}: {commentObj.comment}
+                          </li>
+                        ))
                         : video.CommentsHindi.map((commentObj, index) => (
-                            <li key={index} className="text-gray-400">
-                              {commentObj.username}:{commentObj.comment}
-                            </li>
-                          ))}
+                          <li key={index} className="text-gray-400">
+                            {commentObj.username}: {commentObj.comment}
+                          </li>
+                        ))}
                     </ul>
 
                     <input
@@ -203,7 +237,9 @@ export default function Home() {
                       placeholder={`Add a comment in ${selectedLanguage}`}
                       className="bg-gray-700 text-white p-2 rounded w-full mt-2"
                       value={commentTexts[video._id] || ""}
-                      onChange={(e) => setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))} 
+                      onChange={(e) =>
+                        setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))
+                      }
                     />
                     <button
                       onClick={() => {
