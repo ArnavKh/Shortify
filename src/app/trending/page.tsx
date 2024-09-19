@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Header from '../header/header';
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Footer from "../footer/footer";
 
 
 
@@ -153,16 +154,16 @@ export default function TrendingVideos() {
 
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
-    {/* <div className="min-h-screen bg-gray-900 text-white p-8"> */}
+    <main className="flex min-h-screen flex-col items-center overflow-hidden bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
+      {/* <div className="min-h-screen bg-gray-900 text-white p-8"> */}
       <Header onLogout={onLogout} />
       <h1 className="text-3xl font-bold mb-6">Trending Videos</h1>
       {loading ? (
-        <p className="text-gray-400">Loading videos...</p>
+        <p className="text-xl mt-12 font-bold">Loading videos...</p>
       ) : videos.length === 0 ? (
         <p className="text-gray-400">No trending videos available.</p>
       ) : (
-        <div className="bg-primary w-auto h-auto flex flex-col items-start justify-center rounded-lg">
+        <div className="bg-primary w-auto h-auto flex flex-col items-center justify-center rounded-lg">
           {videos.map((video) => {
             return (
               <div
@@ -175,7 +176,7 @@ export default function TrendingVideos() {
                   }}
                   controls
                   loop
-                  className="h-full w-auto max-w-full object-contain rounded-lg"
+                  className="h-full w-auto max-w-2xl object-contain rounded-lg"
                   src={video.VideoFile}
                 />
 
@@ -192,8 +193,8 @@ export default function TrendingVideos() {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          fill="#FF7375"
-                          stroke="#FF7375"
+                          fill="none"
+                          stroke="#ffffff"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -205,8 +206,9 @@ export default function TrendingVideos() {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#ffffff"
+                          fill="#FF7375"
+                          stroke="#FF7375"
+
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -220,7 +222,7 @@ export default function TrendingVideos() {
                   </div>
 
                   {/* Comment Section */}
-                  <div className="mt-4 flex flex-col justify-end">
+                  <div className="mt-4 flex flex-col justify-end max-w-96">
                     <h3 className="text-lg font-semibold">Comments</h3>
                     <select
                       className="bg-primary text-white my-2 p-2 rounded"
@@ -233,15 +235,15 @@ export default function TrendingVideos() {
                       <option value="Hindi">Hindi ({video.CommentsHindi.length})</option>
                     </select>
 
-                    <ul className="mt-2 max-h-96 overflow-y-auto p-2 my-6">
+                    <ul className="mt-2 max-h-96 overflow-y-auto p-2 my-6 text-wrap">
                       {selectedLanguage === "English"
                         ? video.CommentsEnglish.map((commentObj, index) => (
-                          <li key={index} className="text-white">
+                          <li key={index} className="text-white pt-2">
                             {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
                           </li>
                         ))
                         : video.CommentsHindi.map((commentObj, index) => (
-                          <li key={index} className="text-white">
+                          <li key={index} className="text-white pt-2">
                             {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
                           </li>
                         ))}
@@ -279,26 +281,8 @@ export default function TrendingVideos() {
           })}
         </div>
       )}
-    {/* </div> */}
+      {/* </div> */}
+      <Footer />
     </main>
   );
 }
-
-
-// (
-//   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//     {videos.map((video) => (
-//       <div key={video._id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-//         <video
-//           src={video.VideoFile}
-//           controls
-//           className="w-full h-48 object-cover"
-//         />
-//         <div className="p-4">
-//           <h2 className="text-xl font-semibold">{video.Videoname}</h2>
-//           <p className="text-gray-400">{video.Likes} likes</p>
-//         </div>
-//       </div>
-//     ))}
-//   </div>
-// )

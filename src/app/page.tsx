@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Header from "./header/header";
+import Footer from "./footer/footer";
 
 // Header Component
 const handleLogout = () => {
@@ -156,12 +157,14 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-hidden bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
+      {/* Header */}
+
       <Header onLogout={onLogout} />
 
       {/* Content */}
       <div className="w-full bg-primary flex flex-col items-center mt-16">
         {loading ? (
-          <p className="mt-12 font-we">Loading videos...</p>
+          <p className="text-xl  mt-12 font-bold">Loading videos...</p>
         ) : (
           <div className="bg-primary w-auto h-auto flex flex-col items-center justify-center rounded-lg">
             {videos.map((video) => {
@@ -283,10 +286,8 @@ export default function Home() {
       </div>
 
 
-      {/* Footer */}
-      <footer className="w-full p-4 bg-primary mt-12">
-        <p className="text-center text-gray-500">© Aditya Kulkarni, Surab Sebait, Arnav Khadkatkar, Khushi Mittal</p>
-      </footer>
+      <Footer />
+
     </main >
   );
 }

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Header from "../header/header";
+import Footer from "../footer/footer";
 
 // Header Component
 const handleLogout = () => {
@@ -65,6 +66,7 @@ export default function LikedVideos() {
           ))}
         </div>
       )}
+      <Footer />
     </div>
   );
 }
