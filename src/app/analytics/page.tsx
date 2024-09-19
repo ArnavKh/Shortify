@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
+import SentimentBarChart from "@/components/sentimentBarChart";
 
 interface Comment {
   username: string;
@@ -40,18 +41,15 @@ export default function AnalyticsPage() {
         setVideos(response.data.videos);
         setUsername(response.data.username);
 
-        
         for (const video of response.data.videos) {
           const englishComments = video.CommentsEnglish
-            .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")  // Filter out null or empty comments
+            .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
             .map((comment: Comment) => comment.comment);
           const hindiComments = video.CommentsHindi
-            .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")  // Filter out null or empty comments
+            .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
             .map((comment: Comment) => comment.comment);
 
-          
           if (englishComments.length > 0 || hindiComments.length > 0) {
-            
             const sentimentResponse = await fetch("/api/users/sentiments", {
               method: "POST",
               headers: {
@@ -67,7 +65,6 @@ export default function AnalyticsPage() {
             const sentimentData = await sentimentResponse.json();
             setVideoSentiment((prev) => ({ ...prev, [video._id]: sentimentData }));
           } else {
-            // If no comments, set sentiment as default or handle accordingly
             setVideoSentiment((prev) => ({ ...prev, [video._id]: { positive: 0, neutral: 0, negative: 0 } }));
           }
         }
@@ -85,13 +82,7 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex justify-between w-full p-4 bg-gray-900">
         <div className="flex items-center gap-5">
-          <Image
-            className="logo"
-            src="/logo.svg" // Replace with your logo
-            alt="Logo"
-            width={100}
-            height={50}
-          />
+          <Image className="logo" src="/logo.svg" alt="Logo" width={100} height={50} />
           <h2>{username}</h2>
         </div>
         <nav className="flex space-x-8">
@@ -111,7 +102,7 @@ export default function AnalyticsPage() {
       <div className="w-full p-5 flex flex-col gap-6">
         {videos.length > 0 ? (
           videos.map((video) => (
-            <div key={video._id} className="w-full bg-gray-800 p-4 rounded-lg relative flex flex-col gap-4">
+            <div key={video._id} className="w-full bg-gray-800 p-4 rounded-lg relative flex flex-col md:flex-row gap-4 items-center">
               {/* Video thumbnail */}
               <video src={video.VideoFile} controls width="25%" className="rounded-md" />
               {/* Video information */}
@@ -119,18 +110,14 @@ export default function AnalyticsPage() {
                 <h3 className="text-xl font-bold">{video.Videoname}</h3>
                 <p className="text-sm text-gray-400">Likes: {video.Likes}</p>
                 <p className="text-sm text-gray-400">Tags: {video.Tags.join(", ")}</p>
-              </div>
 
-              {/* Sentiment Analysis for this video */}
-              {videoSentiment[video._id] ? (
-                <div className="mt-4 flex gap-6">
-                  <p className="text-sm text-green-400">Positive: {videoSentiment[video._id].positive}</p>
-                  <p className="text-sm text-yellow-400">Neutral: {videoSentiment[video._id].neutral}</p>
-                  <p className="text-sm text-red-400">Negative: {videoSentiment[video._id].negative}</p>
-                </div>
-              ) : (
-                <p className="text-gray-400">Loading sentiment analysis...</p>
-              )}
+                {/* Sentiment Analysis for this video */}
+                {videoSentiment[video._id] ? (
+                  <SentimentBarChart sentimentData={videoSentiment[video._id]} />
+                ) : (
+                  <p className="text-gray-400">Loading sentiment analysis...</p>
+                )}
+              </div>
             </div>
           ))
         ) : (
