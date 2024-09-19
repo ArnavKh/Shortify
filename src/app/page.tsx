@@ -155,17 +155,15 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
-      {/* Header */}
-
+    <main className="flex min-h-screen flex-col items-center overflow-hidden bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
       <Header onLogout={onLogout} />
 
       {/* Content */}
       <div className="w-full bg-primary flex flex-col items-center mt-16">
         {loading ? (
-          <p>Loading videos...</p>
+          <p className="mt-12 font-we">Loading videos...</p>
         ) : (
-          <div className="bg-primary w-auto h-auto flex flex-col items-start justify-center rounded-lg">
+          <div className="bg-primary w-auto h-auto flex flex-col items-center justify-center rounded-lg">
             {videos.map((video) => {
               return (
                 <div
@@ -178,7 +176,7 @@ export default function Home() {
                     }}
                     controls
                     loop
-                    className="h-full w-auto max-w-full object-contain rounded-lg"
+                    className="h-full w-auto max-w-2xl object-contain rounded-lg"
                     src={video.VideoFile}
                   />
 
@@ -223,7 +221,7 @@ export default function Home() {
                     </div>
 
                     {/* Comment Section */}
-                    <div className="mt-4 flex flex-col justify-end">
+                    <div className="mt-4 flex flex-col justify-end max-w-96">
                       <h3 className="text-lg font-semibold">Comments</h3>
                       <select
                         className="bg-primary text-white my-2 p-2 rounded"
@@ -236,15 +234,15 @@ export default function Home() {
                         <option value="Hindi">Hindi ({video.CommentsHindi.length})</option>
                       </select>
 
-                      <ul className="mt-2 max-h-96 overflow-y-auto p-2 my-6">
+                      <ul className="mt-2 max-h-96 overflow-y-auto p-2 my-6 text-wrap">
                         {selectedLanguage === "English"
                           ? video.CommentsEnglish.map((commentObj, index) => (
-                            <li key={index} className="text-white">
+                            <li key={index} className="text-white pt-2">
                               {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
                             </li>
                           ))
                           : video.CommentsHindi.map((commentObj, index) => (
-                            <li key={index} className="text-white">
+                            <li key={index} className="text-white pt-2">
                               {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
                             </li>
                           ))}
