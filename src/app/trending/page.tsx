@@ -183,9 +183,9 @@ export default function TrendingVideos() {
                 />
 
                 {/* Video Sidebar */}
-                <div className="p-4 flex flex-col justify-end h-full min-w-96">
+                <div className="p-4 flex flex-col justify-end h-full max-w-96">
                   <div>
-                    <h2 className="text-xl font-semibold ">{video.Videoname}</h2>
+                    <h2 className="text-xl font-semibold text-wrap">{video.Videoname}</h2>
                     <button
                       onClick={() => toggleLike(video._id, video.VideoFile)}
                       className={`py-2 m-auto rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? "" : ""
@@ -224,7 +224,7 @@ export default function TrendingVideos() {
                   </div>
 
                   {/* Comment Section */}
-                  <div className="mt-4 flex flex-col justify-end max-w-96">
+                  <div className="mt-4 flex flex-col justify-end">
                     <h3 className="text-lg font-semibold">Comments</h3>
                     <select
                       className="bg-primary text-white my-2 p-2 rounded"
