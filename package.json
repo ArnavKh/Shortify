@@ -24,7 +24,8 @@
     "nodemailer": "^6.9.14",
     "react": "^18",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "react-intersection-observer": "^9.13.1"
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",

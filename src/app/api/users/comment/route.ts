@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import Video from "@/models/videoModel";
+import User from "@/models/userModel"
+import { getDataFromToken } from "@/helpers/getDataFromToken";
 
 export async function POST(req: NextRequest) {
   await connect();
@@ -14,7 +16,13 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
+    const userId = getDataFromToken(req);
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+    const username = user.username;
+    
     // Find the video by ID
     const video = await Video.findById(videoId);
     if (!video) {
@@ -23,9 +31,9 @@ export async function POST(req: NextRequest) {
 
     // Add the comment to the appropriate language array
     if (language === "English") {
-      video.CommentsEnglish.push(comment);
+      video.CommentsEnglish.push({ username, comment });
     } else if (language === "Hindi") {
-      video.CommentsHindi.push(comment);
+      video.CommentsHindi.push({ username, comment });
     } else {
       return NextResponse.json(
         { message: "Invalid language" },
