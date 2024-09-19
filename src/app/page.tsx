@@ -6,6 +6,14 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Header from "./header/header";
+
+// Header Component
+const handleLogout = () => {
+  // Perform logout action here
+  console.log('Logging out...');
+};
+
 
 // Video interface
 interface Comment {
@@ -147,123 +155,140 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500">
+    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
       {/* Header */}
-      <div className="flex justify-between w-full p-4 bg-primary fixed z-50">
-        <div className="flex items-center">
-          <Image src="/Logo.png" alt="Logo" width={50} height={50} />
-        </div>
-        <nav className="flex space-x-8">
-          <Link href="/profile">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
-              Profile
-            </button>
-          </Link>
-          <Link href="">
-            <button onClick={onLogout} className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
-              Log Out
-            </button>
-          </Link>
-          <Link href="/trending">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
-              Trending
-            </button>
-          </Link>
-          <Link href="/likedVideos">
-            <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
-              Liked Videos
-            </button>
-          </Link>
-        </nav>
-      </div>
+
+      <Header onLogout={handleLogout} />
 
       {/* Content */}
-      <div className="w-full h-full overflow-auto flex flex-col items-center mt-24">
+      <div className="w-full bg-primary flex flex-col items-center mt-16">
         {loading ? (
           <p>Loading videos...</p>
         ) : (
-          <div className="w-full max-w-screen-sm h-full flex flex-col items-center">
-            {videos.map((video) => (
-              <div
-                key={video._id}
-                className="bg-secondary rounded-lg overflow-hidden shadow-lg mb-8 w-full h-[90vh] flex justify-center items-center"
-              >
-                <video
-                  ref={(el) => {
-                    videoRefs.current[video._id] = el; // Store reference without returning
-                  }}
-                  controls
-                  loop
-                  className="h-full w-auto max-w-full object-contain"
-                  src={video.VideoFile}
-                />
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold">{video.Videoname}</h2>
-                  <button
-                    onClick={() => toggleLike(video._id, video.VideoFile)}
-                    className={`px-4 py-2 rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? "bg-red-500" : "bg-blue-500"
-                      }`}
-                  >
-                    {likedVideoUrls.includes(video.VideoFile) ? "Unlike" : "Like"}
-                  </button>
+          <div className="bg-primary w-auto h-auto flex flex-col items-start justify-center rounded-lg">
+            {videos.map((video) => {
+              return (
+                <div
+                  key={video._id}
+                  className="bg-secondary w-auto rounded-lg shadow-lg overflow-x-auto mt-8 h-[90vh] flex justify-center items-center"
+                >
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[video._id] = el; // Store reference without returning
+                    }}
+                    controls
+                    loop
+                    className="h-full w-auto max-w-full object-contain rounded-lg"
+                    src={video.VideoFile}
+                  />
 
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold">Comments</h3>
-                    <select
-                      className="bg-gray-700 text-white mt-2 p-2 rounded"
-                      onChange={(e) => setSelectedLanguage(e.target.value as "English" | "Hindi")}
-                      value={selectedLanguage}
-                    >
-                      <option value="English">English</option>
-                      <option value="Hindi">Hindi</option>
-                    </select>
+                  {/* Video Sidebar */}
+                  <div className="p-4 flex flex-col justify-end h-full min-w-96">
+                    <div>
+                      <h2 className="text-xl font-semibold ">{video.Videoname}</h2>
+                      <button
+                        onClick={() => toggleLike(video._id, video.VideoFile)}
+                        className={`py-2 m-auto rounded-md text-white mr-2 ${likedVideoUrls.includes(video.VideoFile) ? "" : ""
+                          }`}
+                      >
+                        {likedVideoUrls.includes(video.VideoFile) ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="#FF7375"
+                            stroke="#FF7375"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-heart w-10 m-auto"
+                          >
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#ffffff"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-heart w-10 m-auto"
+                          >
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                          </svg>
+                        )}
+                        <p className="text-sm">{video.Likes}</p>
+                      </button>
+                    </div>
 
-                    <ul className="mt-2">
-                      {selectedLanguage === "English"
-                        ? video.CommentsEnglish.map((commentObj, index) => (
-                          <li key={index} className="text-gray-400">
-                            {commentObj.username}: {commentObj.comment}
-                          </li>
-                        ))
-                        : video.CommentsHindi.map((commentObj, index) => (
-                          <li key={index} className="text-gray-400">
-                            {commentObj.username}: {commentObj.comment}
-                          </li>
-                        ))}
-                    </ul>
-
-                    <input
-                      type="text"
-                      placeholder={`Add a comment in ${selectedLanguage}`}
-                      className="bg-gray-700 text-white p-2 rounded w-full mt-2"
-                      value={commentTexts[video._id] || ""}
-                      onChange={(e) =>
-                        setCommentTexts((prev) => ({ ...prev, [video._id]: e.target.value }))
-                      }
-                    />
-                    <button
-                      onClick={() => {
-                        const comment = commentTexts[video._id];
-                        if (comment.trim()) {
-                          addComment(video._id, comment);
+                    {/* Comment Section */}
+                    <div className="mt-4 flex flex-col justify-end">
+                      <h3 className="text-lg font-semibold">Comments</h3>
+                      <select
+                        className="bg-primary text-white my-2 p-2 rounded"
+                        onChange={(e) =>
+                          setSelectedLanguage(e.target.value as "English" | "Hindi")
                         }
-                      }}
-                      className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
-                    >
-                      Submit Comment
-                    </button>
+                        value={selectedLanguage}
+                      >
+                        <option value="English">English ({video.CommentsEnglish.length})</option>
+                        <option value="Hindi">Hindi ({video.CommentsHindi.length})</option>
+                      </select>
+
+                      <ul className="mt-2 max-h-96 overflow-y-auto p-2 my-6">
+                        {selectedLanguage === "English"
+                          ? video.CommentsEnglish.map((commentObj, index) => (
+                            <li key={index} className="text-white">
+                              {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
+                            </li>
+                          ))
+                          : video.CommentsHindi.map((commentObj, index) => (
+                            <li key={index} className="text-white">
+                              {commentObj.username}: <span className="text-gray-300">{commentObj.comment}</span>
+                            </li>
+                          ))}
+                      </ul>
+
+                      <div>
+                        <input
+                          type="text"
+                          placeholder={`Add a comment in ${selectedLanguage}`}
+                          className="w-full p-2 border-b-2 border-gray-300  bg-secondary focus:outline-none focus:border-[#F84E9D]"
+                          value={commentTexts[video._id] || ""}
+                          onChange={(e) =>
+                            setCommentTexts((prev) => ({
+                              ...prev,
+                              [video._id]: e.target.value,
+                            }))
+                          }
+                        />
+                        <button
+                          onClick={() => {
+                            const comment = commentTexts[video._id];
+                            if (comment.trim()) {
+                              addComment(video._id, comment);
+                            }
+                          }}
+                          className="w-full p-2 mt-2 rounded-md myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] active:scale-95 focus:outline-none"
+                        >
+                          Add Comment
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
+
       {/* Footer */}
-      <footer className="w-full p-4 bg-gray-900 mt-12">
-        <p className="text-center text-gray-500">© 2024 Your Website</p>
+      <footer className="w-full p-4 bg-primary mt-12">
+        <p className="text-center text-gray-500">© Aditya Kulkarni, Surab Sebait, Arnav Khadkatkar, Khushi Mittal</p>
       </footer>
-    </main>
+    </main >
   );
 }
