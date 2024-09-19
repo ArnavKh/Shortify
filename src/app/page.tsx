@@ -158,7 +158,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
       {/* Header */}
 
-      <Header onLogout={handleLogout} />
+      <Header onLogout={onLogout} />
 
       {/* Content */}
       <div className="w-full bg-primary flex flex-col items-center mt-16">
