@@ -35,6 +35,12 @@ export async function POST(request: NextResponse) {
           $pull: { likedVideos: videoUrl },
         });
       }
+      if (user.uploadedVideos.includes(videoUrl)) {
+        // Remove the URL from their likedVideos array
+        await User.findByIdAndUpdate(user._id, {
+          $pull: { uploadedVideos: videoUrl },
+        });
+      }
     }
 
     return NextResponse.json({
