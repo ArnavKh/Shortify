@@ -15,9 +15,8 @@ const VideoSchema = new mongoose.Schema({
         default: 0
     },
     Tags: {
-        type: [String],
-        required: [true, "Please enter atleast one tag"],
-        default: []
+        type: String,
+        required: [true, "Please enter atleast one tag"]
     },
     CommentsEnglish: {
         type: Array,

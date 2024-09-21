@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const newVideo = new Video({
       Videoname: videoName,
       VideoFile: fileUrl, // S3 URL of the uploaded file
-      Tags: tags.split(","), // Split tags by comma into an array
+      Tags: tags, // Split tags by comma into an array
       UserId: userId, // User who uploaded the video
     });
 

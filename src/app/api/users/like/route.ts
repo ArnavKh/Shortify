@@ -32,12 +32,18 @@ export async function POST(request: NextRequest) {
 
     // Toggle like status
     let likes;
-    if (user.likedVideos.includes(video.VideoFile)) {
+    if (user.likedVideos.includes(video.VideoFile) && user.likedVideosID.includes(video.videoId)) {
       // Remove from likedVideos
       user.likedVideos = user.likedVideos.filter((url:string) => url !== video.VideoFile);
+      
+      user.likedVideosID = user.likedVideosID.filter((id:string)=> id !== videoId);
       likes = video.Likes - 1;
     } else {
       // Add to likedVideos
+      
+      
+      user.favourites.push(video.Tags)
+      user.likedVideosID.push(videoId);
       user.likedVideos.push(video.VideoFile);
       likes = video.Likes + 1;
     }

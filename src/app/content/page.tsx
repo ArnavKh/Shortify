@@ -91,7 +91,7 @@ export default function ProfilePage() {
               <div className="mt-3">
                 <h3 className="text-xl font-bold">{video.Videoname}</h3>
                 <p className="text-sm text-gray-400">Likes: {video.Likes}</p>
-                <p className="text-sm text-gray-400">Tags: {video.Tags.join(", ")}</p>
+                <p className="text-sm text-gray-400">Tags: {video.Tags}</p>
               </div>
               {/* Delete button */}
               <button
