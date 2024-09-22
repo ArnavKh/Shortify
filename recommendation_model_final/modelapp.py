@@ -90,19 +90,15 @@ def recommend_videos(user_id, likes_df, tags_df, video_tag_matrix):
     similarity_df = similarity_df.sort_values(by='similarity', ascending=False)
     
     recommendations_id = similarity_df.head(len(similarity_df))['video_id'].tolist()
-    print(recommendations_id)
-    recommend_videos = []
-    for i in range(len(recommendations_id)):
-        recommend_videos.append(tags_vid.find({'_id':recommendations_id[i]}))
-    recommend_videos = list(recommend_videos)
-    # recommended_videos = list(tags_vid.find({'_id': {'$in': recommendations_id}}))
+    
+    recommended_videos = tags_vid.find({'_id': {'$in': recommendations_id}})
+    recommended_videos_map = {video['_id']: video for video in recommended_videos}
+    sorted_recommended_videos = [recommended_videos_map[video_id] for video_id in recommendations_id if video_id in recommended_videos_map]
+    
+    # Serialize each video object to make it JSON serializable
+    serialized_videos = [serialize_video(video) for video in sorted_recommended_videos]
 
-    # # Serialize each video object to make it JSON serializable
-    serialized_videos = [serialize_video(video) for video in recommend_videos]
-    print(serialized_videos)
     return serialized_videos
-
-
 
 @app.route('/recommendations/<string:user_id>', methods=['GET'])
 def get_recommendations(user_id):
@@ -122,4 +118,4 @@ def get_recommendations(user_id):
     return jsonify({'recommended_videos': recommended_videos})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5002, debug=True)
+    app.run(port=5002, debug=True)
