@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Video from "@/models/videoModel"; // Adjust path to your model
-import {connect} from "@/dbConfig/dbConfig"; // Adjust path to your DB connection utility
+import { connect } from "@/dbConfig/dbConfig"; // Adjust path to your DB connection utility
 
 // GET request handler
 export async function GET(req: NextRequest) {
@@ -8,8 +8,11 @@ export async function GET(req: NextRequest) {
     // Connect to the database
     await connect();
 
-    // Fetch all videos from the collection
-    const videos = await Video.find({});
+    // Get the total number of videos
+    const totalVideos = await Video.countDocuments();
+
+    // Use the $sample aggregation to randomly fetch all videos
+    const videos = await Video.aggregate([{ $sample: { size: totalVideos } }]);
 
     // Return the videos in JSON format
     return NextResponse.json({ videos }, { status: 200 });
