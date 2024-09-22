@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all videos from the collection
     const videos = await Video.find({});
-
+    console.log(videos)
     // Return the videos in JSON format
     return NextResponse.json({ videos }, { status: 200 });
   } catch (error) {

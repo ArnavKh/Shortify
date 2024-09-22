@@ -22,6 +22,8 @@ interface Comment {
   comment: string;
 }
 
+
+
 interface Video {
   _id: string;
   Videoname: string;
@@ -33,6 +35,7 @@ interface Video {
 
 export default function Home() {
   const router = useRouter();
+  const [likedVideoId,setlikedVideoId] = useState([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [likedVideoUrls, setLikedVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -82,11 +85,13 @@ export default function Home() {
     };
   }, [scrollAmount]);
 
+
   useEffect(() => {
     // Fetch videos and liked videos from the database
     const fetchVideosAndLikedStatus = async () => {
       try {
         const videoResponse = await axios.get("/api/users/videos");
+        console.log(videoResponse.data.videos)
         setVideos(videoResponse.data.videos);
 
         const likedVideosResponse = await axios.get("/api/users/likedVideos");
