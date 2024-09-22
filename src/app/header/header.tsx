@@ -56,7 +56,12 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               Liked Videos
                          </button>
                     </Link>
-                    <Link href="">
+                    <Link href="/recommend" passHref>
+                         <button className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+                              Recommended Videos
+                         </button>
+                    </Link>
+                    <Link href = "">
                          <button
                               onClick={onLogout}
                               className="px-4 py-2 bg-secondary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]"

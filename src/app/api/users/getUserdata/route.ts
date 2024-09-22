@@ -33,7 +33,7 @@ export async function POST(request:NextRequest){
     );
 
     const validVideoDetails = videoDetails.filter((video): video is VideoDocument => video !== null);
-
+    console.log(videoDetails)
     return NextResponse.json({
         username: user.username,
         videos: validVideoDetails
