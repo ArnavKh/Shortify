@@ -156,9 +156,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center overflow-hidden bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
-      {/* Header */}
+    <main className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
 
+      {/* Header */}
       <Header onLogout={onLogout} />
 
       {/* Content */}
