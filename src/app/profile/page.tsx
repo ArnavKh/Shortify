@@ -185,11 +185,11 @@ export default function ProfilePage() {
             <Header onLogout={onLogout} />
 
             {/* Upload Videos Section */}
-            <div className="flex flex-col items-center justify-center h-[90vh] fixed top-20 left-0 w-[26rem] bg-secondary text-white p-5 m-5 rounded-lg">
+            <div className="flex flex-col items-center justify-center h-auto fixed top-20 left-0 w-96 bg-secondary text-white p-5 py-20 m-5 rounded-lg">
                 <h1 className="text-3xl font-bold mb-6">
                     {loading ? "Processing..." : "Upload Video"}
                 </h1>
-                <form className="flex flex-col justify-center w-full max-w-md bg-secondary p-6 rounded-lg shadow-lg">
+                <form className="flex flex-col justify-center w-full max-w-md bg-secondary p-6 rounded-lg">
                     {/* Input for Video Name */}
                     <div className="mb-4">
                         {/* <label htmlFor="videoName" className="block text-sm font-medium">
@@ -264,7 +264,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Uploaded Videos Section */}
-            <div className="ml-[27.5rem] p-5 flex flex-col gap-6 mt-[5rem]">
+            <div className="ml-[25.5rem] p-5 flex flex-col gap-6 mt-[5rem]">
                 {videos.length > 0 ? (
                     videos.map((video) => (
                         <div key={video._id} className="bg-secondary p-4 rounded-lg h-auto flex">
@@ -278,12 +278,12 @@ export default function ProfilePage() {
                                     className="rounded-md"
                                 />
                             </div>
-                            <div className="w-[40%]">
+                            <div className="w-[50%]">
                                 {/* Video information */}
                                 <div className="mt-3">
                                     <h3 className="text-xl font-bold">{video.Videoname}</h3>
-                                    <p className="text-sm text-gray-400">Likes: {video.Likes}</p>
-                                    <p className="text-sm text-gray-400">Tags: {video.Tags}</p>
+                                    <p className="text-sm text-gray-400 font-bold">Likes: {video.Likes}</p>
+                                    <p className="text-sm text-gray-400 font-bold">Tags: {video.Tags}</p>
                                 </div>
 
                                 {/* Delete button */}
@@ -300,7 +300,7 @@ export default function ProfilePage() {
                                 </Link>
                             </div>
 
-                            <div className="w-[60%]">
+                            <div className="w-[50%]">
                                 {/* Sentiment Analysis for this video */}
                                 {videoSentiment[video._id] ? (
                                     <SentimentBarChart sentimentData={videoSentiment[video._id]} />
