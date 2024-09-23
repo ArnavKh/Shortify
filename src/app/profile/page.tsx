@@ -1,13 +1,35 @@
 
 "use client"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import toast from "react-hot-toast"
 import Link from "next/link"
-import Image from "next/image";
 import Header from "../header/header";
 import Footer from "../footer/footer";
+import SentimentBarChart from "@/components/sentimentBarChart";
+
+
+interface Comment {
+    username: string;
+    comment: string;
+  }
+
+interface Video {
+    _id: string;
+    Videoname: string;
+    VideoFile: string;
+    Likes: number;
+    CommentsEnglish: Comment[];
+    CommentsHindi: Comment[];
+    Tags: string[];
+  }
+  
+  interface SentimentCounts {
+    positive: number;
+    neutral: number;
+    negative: number;
+  }
 
 // Header Component
 const handleLogout = () => {
@@ -15,26 +37,24 @@ const handleLogout = () => {
     console.log('Logging out...');
 };
 
-
 export default function ProfilePage() {
-    const router = useRouter()
-    const [data, setData] = React.useState("")
+    const router = useRouter();
+    const [videos, setVideos] = React.useState<Video[]>([]);
+    const [username, setUsername] = React.useState("");
+    const [videoSentiment, setVideoSentiment] = useState<Record<string, SentimentCounts>>({});
 
-    const [username, setusername] = React.useState("")
 
-
-    useEffect(() => {
-        async function fetchUsername() {
-            try {
-                const response = await axios.post("/api/users/getUserdata")
-                setusername(response.data.username)
-            } catch (error) {
-                console.error("Error fetching username: ", error)
-                toast.error("Failed to fetch user data");
-            }
+    
+    const deleteVideo = async (videoId: string) => {
+        try {
+            await axios.post("/api/users/deleteVideo", { videoId });
+            setVideos((prevVideos) => prevVideos.filter((video) => video._id !== videoId));
+            toast.success("Video deleted successfully");
+        } catch (error) {
+            console.error("Error deleting video:", error);
+            toast.error("Failed to delete video");
         }
-        fetchUsername();
-    }, [])
+    };
 
     const [videoData, setVideoData] = React.useState({
         videoName: "",
@@ -54,14 +74,14 @@ export default function ProfilePage() {
 
         try {
             setLoading(true);
-
+            
             // Prepare FormData for file upload
             const formData = new FormData();
             formData.append("videoName", videoData.videoName);
             formData.append("tags", videoData.tags);
 
             formData.append("videoFile", videoData.videoFile);
-
+            
             const response = await axios.post("/api/users/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -93,59 +113,88 @@ export default function ProfilePage() {
 
     const onLogout = async () => {
         try {
-          await axios.get("/api/users/logout");
-          toast.success("Logout successful");
-          router.push("/login");
+            await axios.get("/api/users/logout");
+            toast.success("Logout successful");
+            router.push("/login");
         } catch (error: any) {
-          toast.error("Logout failed. Please try again.");
+            toast.error("Logout failed. Please try again.");
         }
-      };
+    };
+    
+    // useEffect(() => {
+    //     async function fetchUsername() {
+    //         try {
+    //             const response = await axios.post("/api/users/getUserdata");
+    //             setVideos(response.data.videos);
+    //             setUsername(response.data.username);
+    //         } catch (error) {
+    //             console.error("Error fetching username:", error);
+    //             toast.error("Failed to fetch user data");
+    //         }
+    //     }
+    //     fetchUsername();
+    // }, []);
+    
+    useEffect(() => {
+        async function fetchUserData() {
+          try {
+            const response = await axios.post("/api/users/getUserdata");
+            setVideos(response.data.videos);
+            setUsername(response.data.username);
+    
+            for (const video of response.data.videos) {
+              const englishComments = video.CommentsEnglish
+                .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
+                .map((comment: Comment) => comment.comment);
+              const hindiComments = video.CommentsHindi
+                .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
+                .map((comment: Comment) => comment.comment);
+    
+              if (englishComments.length > 0 || hindiComments.length > 0) {
+                const sentimentResponse = await fetch("/api/users/sentiments", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ englishComments, hindiComments }),
+                });
+    
+                if (!sentimentResponse.ok) {
+                  throw new Error(`Failed to fetch sentiment analysis for video: ${video._id}`);
+                }
+    
+                const sentimentData = await sentimentResponse.json();
+                setVideoSentiment((prev) => ({ ...prev, [video._id]: sentimentData }));
+              } else {
+                setVideoSentiment((prev) => ({ ...prev, [video._id]: { positive: 0, neutral: 0, negative: 0 } }));
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching user data or sentiment analysis: ", error);
+            toast.error("Failed to fetch data");
+          }
+        }
+    
+        fetchUserData();
+      }, []);
 
     return (
-        <main className="min-h-screen  items-center bg-black text-white">
+        <main className="flex min-h-screen flex-col bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
             {/* Header */}
 
             <Header onLogout={onLogout} />
 
-
-            <div className="flex justify-between w-full p-4 bg-gray-900">
-                <div className="flex items-center gap-5">
-                    <Image
-                        className="logo"
-                        src="/logo.svg" // Replace with your logo or YouTube-like logo
-                        alt="Logo"
-                        width={100}
-                        height={50}
-
-                    />
-                    <h2>{username}</h2>
-                </div>
-                <nav className="flex space-x-8">
-                    <Link href="/">
-                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Home</button>
-                    </Link>
-                    <Link href="/profile">
-                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">DashBoard</button>
-                    </Link>
-                    <Link href="/content">
-                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Content</button>
-                    </Link>
-                    <Link href="/analytics">
-                        <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Analytics</button>
-                    </Link>
-                </nav>
-            </div>
-
-            <div className="flex flex-col items-center justify-center min-h-screen w-96 bg-gray-900 text-white">
+            {/* Upload Videos Section */}
+            <div className="flex flex-col items-center justify-center h-[90vh] fixed top-20 left-0 w-[26rem] bg-secondary text-white p-5 m-5 rounded-lg">
                 <h1 className="text-3xl font-bold mb-6">
                     {loading ? "Processing..." : "Upload Video"}
                 </h1>
-                <form className="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-lg">
+                <form className="flex flex-col justify-center w-full max-w-md bg-secondary p-6 rounded-lg shadow-lg">
                     {/* Input for Video Name */}
                     <div className="mb-4">
-                        <label htmlFor="videoName" className="block text-sm font-medium">
+                        {/* <label htmlFor="videoName" className="block text-sm font-medium">
                             Video Name
-                        </label>
+                        </label> */}
                         <input
                             type="text"
                             id="videoName"
@@ -153,17 +202,17 @@ export default function ProfilePage() {
                             onChange={(e) =>
                                 setVideoData({ ...videoData, videoName: e.target.value })
                             }
-                            className="w-full p-2 mt-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
-                            placeholder="Enter the video name"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
+                            placeholder="Video Name"
                             required
                         />
                     </div>
 
                     {/* Input Tags */}
                     <div className="mb-4">
-                        <label htmlFor="tags" className="block text-sm font-medium">
+                        {/* <label htmlFor="tags" className="block text-sm font-medium">
                             Tags
-                        </label>
+                        </label> */}
                         <input
                             type="text"
                             id="tags"
@@ -171,8 +220,8 @@ export default function ProfilePage() {
                             onChange={(e) =>
                                 setVideoData({ ...videoData, tags: e.target.value })
                             }
-                            className="w-full p-2 mt-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
-                            placeholder="Enter the video name"
+                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
+                            placeholder="Tags"
                             required
                         />
                     </div>
@@ -180,9 +229,9 @@ export default function ProfilePage() {
 
                     {/* Input for Video File */}
                     <div className="mb-4">
-                        <label htmlFor="videoFile" className="block text-sm font-medium">
+                        {/* <label htmlFor="videoFile" className="block text-sm font-medium">
                             Upload Video
-                        </label>
+                        </label> */}
                         <input
                             type="file"
                             id="videoFile"
@@ -193,7 +242,7 @@ export default function ProfilePage() {
                                     videoFile: file,
                                 }));
                             }}
-                            className="w-full p-2 mt-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
+                            className="w-full p-2 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
                             accept="video/*" // Ensure only video files are selected
                             required
                         />
@@ -205,8 +254,8 @@ export default function ProfilePage() {
                         onClick={onUpload}
                         disabled={buttonDisabled}
                         className={`w-full p-2 mt-4 text-white rounded-lg ${buttonDisabled
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 hover:bg-blue-600"
+                            ? "bg-primary focus:outline-none cursor-not-allowed"
+                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] focus:outline-none"
                             }`}
                     >
                         {loading ? "Uploading..." : "Upload"}
@@ -214,8 +263,59 @@ export default function ProfilePage() {
                 </form>
             </div>
 
-            <Footer />
+            {/* Uploaded Videos Section */}
+            <div className="ml-[27.5rem] p-5 flex flex-col gap-6 mt-[5rem]">
+                {videos.length > 0 ? (
+                    videos.map((video) => (
+                        <div key={video._id} className="bg-secondary p-4 rounded-lg h-auto flex">
+                            {/* Video thumbnail */}
+                            <div className="pr-6">
 
+                                <video
+                                    src={video.VideoFile}
+                                    controls
+                                    width={120}
+                                    className="rounded-md"
+                                />
+                            </div>
+                            <div className="w-[40%]">
+                                {/* Video information */}
+                                <div className="mt-3">
+                                    <h3 className="text-xl font-bold">{video.Videoname}</h3>
+                                    <p className="text-sm text-gray-400">Likes: {video.Likes}</p>
+                                    <p className="text-sm text-gray-400">Tags: {video.Tags}</p>
+                                </div>
+
+                                {/* Delete button */}
+                                <button
+                                    onClick={() => deleteVideo(video._id)}
+                                    className="px-4 py-2 mt-4 mr-2 bg-primary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]"
+                                >
+                                    Delete
+                                </button>
+                                <Link href={`/update/${video._id}`}>
+                                    <button className="px-4 py-2 mt-4 ml-2 bg-primary rounded-md hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375]">
+                                        Update
+                                    </button>
+                                </Link>
+                            </div>
+
+                            <div className="w-[60%]">
+                                {/* Sentiment Analysis for this video */}
+                                {videoSentiment[video._id] ? (
+                                    <SentimentBarChart sentimentData={videoSentiment[video._id]} />
+                                ) : (
+                                    <p className="text-gray-400">Loading sentiment analysis...</p>
+                                )}
+                            </div>
+
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-gray-400">No videos found.</p>
+                )}
+                <Footer />
+            </div>
         </main>
     )
 }

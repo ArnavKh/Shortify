@@ -79,24 +79,7 @@ export default function AnalyticsPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-black text-white">
-      {/* Header */}
-      <div className="flex justify-between w-full p-4 bg-gray-900">
-        <div className="flex items-center gap-5">
-          <Image className="logo" src="/logo.svg" alt="Logo" width={100} height={50} />
-          <h2>{username}</h2>
-        </div>
-        <nav className="flex space-x-8">
-          <Link href="/">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Home</button>
-          </Link>
-          <Link href="/profile">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">DashBoard</button>
-          </Link>
-          <Link href="/content">
-            <button className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Content</button>
-          </Link>
-        </nav>
-      </div>
+
 
       {/* Video List with Video-wise Sentiment Analysis */}
       <div className="w-full p-5 flex flex-col gap-6">
