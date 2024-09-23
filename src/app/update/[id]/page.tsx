@@ -73,7 +73,7 @@ export default function UpdatePage(){
           <label className="block text-sm font-medium text-gray-300">Tags</label>
           <input
             type="text"
-            value={Tags.join(", ")}
+            value={Tags}
             onChange={(e) => setTags(e.target.value.split(",").map(tag => tag.trim()))}
             className="w-full p-2 mt-1 bg-gray-800 border border-gray-700 rounded"
           />
