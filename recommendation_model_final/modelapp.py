@@ -11,7 +11,7 @@ from bson import ObjectId
 app = Flask(__name__)
 
 ## MongoDb connection
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb+srv://TeamShortify:shortify123@cluster0.uip93.mongodb.net/")
 db = client['test']
 
 ## collections

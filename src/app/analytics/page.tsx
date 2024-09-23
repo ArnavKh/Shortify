@@ -109,7 +109,7 @@ export default function AnalyticsPage() {
               <div className="flex-1">
                 <h3 className="text-xl font-bold">{video.Videoname}</h3>
                 <p className="text-sm text-gray-400">Likes: {video.Likes}</p>
-                <p className="text-sm text-gray-400">Tags: {video.Tags.join(", ")}</p>
+                <p className="text-sm text-gray-400">Tags: {video.Tags}</p>
 
                 {/* Sentiment Analysis for this video */}
                 {videoSentiment[video._id] ? (
