@@ -21,7 +21,7 @@ const SentimentBarChart: React.FC<SentimentBarChartProps> = ({ sentimentData }) 
       {
         label: "Sentiment Count",
         data: [sentimentData.positive, sentimentData.neutral, sentimentData.negative],
-        backgroundColor: ["#5fab13", "#d9bb34", "#bf1134"],
+        backgroundColor: ["#3cc376", "#e3861c", "#ca354c"],
       },
     ],
   };
