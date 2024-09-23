@@ -40,7 +40,7 @@ const SentimentBarChart: React.FC<SentimentBarChartProps> = ({ sentimentData }) 
 
   return (
     <div className="w-full h-48">
-      <Bar data={data} options={options} className="h-12" />
+      <Bar data={data} options={options} className="w-12" />
     </div>
   );  
 };
