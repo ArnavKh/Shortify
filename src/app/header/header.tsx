@@ -30,6 +30,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
      return (
           <header className="flex justify-between w-full p-4 bg-primary fixed z-50 font-textFont">
                <div className="flex items-center">
+                    {/* <Link href="/" passHref></Link> */}
                     <Image src="/Logo.png" alt="Logo" width={45} height={45} />
                     <h1 className='myGradient inline-block text-transparent bg-clip-text text-3xl font-bold ml-4'>Shortify</h1>
                     <h2 className='pl-4'>{username}</h2>
