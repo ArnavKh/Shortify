@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import axios from "axios";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import axios from "axios";
 import Header from "./header/header";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import Footer from "./footer/footer";
 
 // Header Component
@@ -35,8 +33,8 @@ interface Video {
 
 export default function Home() {
   const router = useRouter();
-  const [likedVideoId,setlikedVideoId] = useState([]);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [likedVideoId,setlikedVideoId] = useState([]);
   const [likedVideoUrls, setLikedVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedLanguage, setSelectedLanguage] = useState<"English" | "Hindi">("English");
