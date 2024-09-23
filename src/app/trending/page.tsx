@@ -101,6 +101,9 @@ export default function TrendingVideos() {
       try {
         const response = await axios.get("/api/users/trending");
         setVideos(response.data.videos);  // Assuming response contains the video data
+
+        const likedVideosResponse = await axios.get("/api/users/likedVideos");
+        setLikedVideoUrls(likedVideosResponse.data.videos || []);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching trending videos:", error);
@@ -195,8 +198,8 @@ export default function TrendingVideos() {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#ffffff"
+                          fill="#FF7375"
+                          stroke="#FF7375"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -208,8 +211,8 @@ export default function TrendingVideos() {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          fill="#FF7375"
-                          stroke="#FF7375"
+                          fill="none"
+                          stroke="#ffffff"
 
                           strokeWidth="2"
                           strokeLinecap="round"
