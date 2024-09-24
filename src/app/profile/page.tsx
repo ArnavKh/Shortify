@@ -185,7 +185,7 @@ export default function ProfilePage() {
             <Header onLogout={onLogout} />
 
             {/* Upload Videos Section */}
-            <div className="flex flex-col items-center justify-center h-auto fixed top-20 left-0 w-96 bg-secondary text-white p-5 py-20 m-5 rounded-lg">
+            <div className="flex flex-col items-center justify-center h-auto lg:fixed lg:top-20 lg:left-0 lg:w-96 mt-[6rem] lg:mt-5 bg-secondary text-white p-5 lg:py-20 m-5 rounded-lg">
                 <h1 className="text-3xl font-bold mb-6">
                     {loading ? "Processing..." : "Upload Video"}
                 </h1>
@@ -264,7 +264,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Uploaded Videos Section */}
-            <div className="ml-[25.5rem] p-5 flex flex-col gap-6 mt-[5rem]">
+            <div className="lg:ml-[25.5rem] p-5 flex flex-col gap-6 lg:mt-[5rem]">
                 {videos.length > 0 ? (
                     videos.map((video) => (
                         <div key={video._id} className="bg-secondary p-4 rounded-lg h-auto flex">
