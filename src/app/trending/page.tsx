@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Header from '../header/header';
@@ -6,18 +7,11 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Footer from "../footer/footer";
 
-
-
-
-
 // Header Component
 const handleLogout = () => {
-  // Perform logout action here
   console.log('Logging out...');
 };
 
-
-// Video interface
 interface Comment {
   username: string;
   comment: string;
@@ -33,7 +27,6 @@ interface Video {
   CommentsHindi: Comment[];
 }
 
-
 export default function TrendingVideos() {
   const router = useRouter();
   const [videos, setVideos] = useState<Video[]>([]);
@@ -47,43 +40,100 @@ export default function TrendingVideos() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null); // Ref to the scrollable container
   const isScrollingRef = useRef(false); // Ref to prevent multiple scrolls at once
 
+  const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0); // Track the last scroll position
+  const [scrolling, setScrolling] = useState(false); // Prevent continuous scrolling
+
+  const handleAutoplayAndFocus = () => {
+    Object.values(videoRefs.current).forEach((video) => {
+      if (video) {
+        const rect = video.getBoundingClientRect();
+        const fullyInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+        if (fullyInView) {
+          video.currentTime = 0; // Reset video to the beginning
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    });
+  };
+
+  const handleGlobalUnmute = () => {
+    const newMuteState = !isGlobalMuted;
+    setIsGlobalMuted(newMuteState);
+    Object.values(videoRefs.current).forEach((video) => {
+      if (video) {
+        video.muted = newMuteState;
+        if (!newMuteState && video.paused && video.currentTime > 0) {
+          video.play(); // Play videos if they're paused and have been started
+        }
+      }
+    });
+  };
+
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault(); // Prevent default scrolling behavior
+    const handleScroll = (event: WheelEvent) => {
+      event.preventDefault(); // Prevent default scroll behavior
 
-      if (isScrollingRef.current) return; // Prevent multiple scrolls at once
-      isScrollingRef.current = true;
+      // The amount you want to scroll (90vh)
+      const scrollAmount = window.innerHeight * 0.925;
+      const currentScroll = window.scrollY;
 
-      const container = scrollContainerRef.current;
-      if (container) {
-        // Determine scroll direction
-        const scrollDirection = e.deltaY > 0 ? scrollAmount : -scrollAmount;
+      if (!scrolling) {
+        setScrolling(true); // Set scrolling state to prevent continuous scroll
 
-        container.scrollBy({
-          top: scrollDirection,
-          behavior: "smooth", // Smooth scroll effect
-        });
+        // Determine if user is scrolling up or down
+        const scrollDirection = event.deltaY > 0 ? 'down' : 'up';
 
-        // Set a timeout to allow the scroll to finish before accepting new scrolls
-        setTimeout(() => {
-          isScrollingRef.current = false;
-        }, 500); // Adjust the delay based on scroll behavior
+        if (scrollDirection === 'down') {
+          window.scrollTo({
+            top: currentScroll + scrollAmount,
+            behavior: 'smooth',
+          });
+        } else {
+          window.scrollTo({
+            top: currentScroll - scrollAmount,
+            behavior: 'smooth',
+          });
+        }
+
+        setTimeout(() => setScrolling(false), 1000);
       }
     };
 
-    const container = scrollContainerRef.current;
-    if (container) {
-      // Attach the scroll listener
-      container.addEventListener("wheel", handleWheel as EventListener, { passive: false });
-    }
+    window.addEventListener('wheel', handleScroll);
 
     return () => {
-      if (container) {
-        // Clean up the listener
-        container.removeEventListener("wheel", handleWheel as EventListener);
+      window.removeEventListener('wheel', handleScroll); // Cleanup event listener
+    };
+  }, [scrolling]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleAutoplayAndFocus); // Listen for scroll to trigger autoplay/focus behavior
+    return () => {
+      window.removeEventListener("scroll", handleAutoplayAndFocus);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchVideosAndLikedStatus = async () => {
+      try {
+        const videoResponse = await axios.get("/api/users/videos");
+        setVideos(videoResponse.data.videos);
+
+        const likedVideosResponse = await axios.get("/api/users/likedVideos");
+        setLikedVideoUrls(likedVideosResponse.data.videos || []);
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching videos or liked videos:", error);
+        setLoading(false);
       }
     };
-  }, [scrollAmount]);
+    fetchVideosAndLikedStatus();
+  }, []);
 
   const onLogout = async () => {
     try {
@@ -180,6 +230,8 @@ export default function TrendingVideos() {
                     videoRefs.current[video._id] = el; // Store reference without returning
                   }}
                   controls
+                  autoPlay
+                  muted={isGlobalMuted}
                   loop
                   className="h-full w-auto max-w-2xl object-contain rounded-lg"
                   src={video.VideoFile}
@@ -223,6 +275,23 @@ export default function TrendingVideos() {
                         </svg>
                       )}
                       <p className="text-sm">{video.Likes}</p>
+                    </button>
+
+                    <button
+                      onClick={handleGlobalUnmute}
+                      className="float-right mt-3 p-2 rounded-md z-50"
+                    >
+                      {isGlobalMuted ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none" className="size-6">
+                          <path d="M14 14.8135V9.18646C14 6.04126 14 4.46866 13.0747 4.0773C12.1494 3.68593 11.0603 4.79793 8.88232 7.02192C7.75439 8.17365 7.11085 8.42869 5.50604 8.42869C4.10257 8.42869 3.40084 8.42869 2.89675 8.77262C1.85035 9.48655 2.00852 10.882 2.00852 12C2.00852 13.118 1.85035 14.5134 2.89675 15.2274C3.40084 15.5713 4.10257 15.5713 5.50604 15.5713C7.11085 15.5713 7.75439 15.8264 8.88232 16.9781C11.0603 19.2021 12.1494 20.3141 13.0747 19.9227C14 19.5313 14 17.9587 14 14.8135Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M18 10L22 14M18 14L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                        </svg>
+
+                      )}
                     </button>
                   </div>
 

@@ -12,12 +12,12 @@ const handleLogout = () => {
   console.log('Logging out...');
 };
 
-// Video interface
 interface Comment {
   username: string;
   comment: string;
 }
 
+// Video interface
 interface Video {
   _id: string;
   Videoname: string;
@@ -34,13 +34,11 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedLanguage, setSelectedLanguage] = useState<"English" | "Hindi">("English");
   const [commentTexts, setCommentTexts] = useState<{ [videoId: string]: string }>({});
-
-  const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({}); // Store references to videos
-  const [scrollAmount, setScrollAmount] = useState(1000);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null); // Ref to the scrollable container
-  const isScrollingRef = useRef(false); // Ref to prevent multiple scrolls at once
+  const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({});
 
   const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0); // Track the last scroll position
+  const [scrolling, setScrolling] = useState(false); // Prevent continuous scrolling
 
   const handleAutoplayAndFocus = () => {
     Object.values(videoRefs.current).forEach((video) => {
@@ -73,31 +71,45 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = (event: WheelEvent) => {
-      event.preventDefault(); // Prevent the default scroll behavior
-      
-      const scrollAmount = window.innerHeight * 0.925; // 90vh
+      event.preventDefault(); // Prevent default scroll behavior
+
+      // The amount you want to scroll (90vh)
+      const scrollAmount = window.innerHeight * 0.925;
       const currentScroll = window.scrollY;
 
-      // Determine if the user is scrolling up or down
-      const scrollDirection = event.deltaY > 0 ? 'down' : 'up';
-      
-      if (scrollDirection === 'down') {
-        window.scrollTo({
-          top: currentScroll + scrollAmount,
-          behavior: 'smooth',
-        });
-      } else {
-        window.scrollTo({
-          top: currentScroll - scrollAmount,
-          behavior: 'smooth',
-        });
+      if (!scrolling) {
+        setScrolling(true); // Set scrolling state to prevent continuous scroll
+
+        // Determine if user is scrolling up or down
+        const scrollDirection = event.deltaY > 0 ? 'down' : 'up';
+
+        if (scrollDirection === 'down') {
+          window.scrollTo({
+            top: currentScroll + scrollAmount,
+            behavior: 'smooth',
+          });
+        } else {
+          window.scrollTo({
+            top: currentScroll - scrollAmount,
+            behavior: 'smooth',
+          });
+        }
+
+        setTimeout(() => setScrolling(false), 1000);
       }
     };
 
     window.addEventListener('wheel', handleScroll);
 
     return () => {
-      window.removeEventListener('wheel', handleScroll); // Cleanup the event listener
+      window.removeEventListener('wheel', handleScroll); // Cleanup event listener
+    };
+  }, [scrolling]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleAutoplayAndFocus); // Listen for scroll to trigger autoplay/focus behavior
+    return () => {
+      window.removeEventListener("scroll", handleAutoplayAndFocus);
     };
   }, []);
 
@@ -119,12 +131,6 @@ export default function Home() {
     fetchVideosAndLikedStatus();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleAutoplayAndFocus); // Listen for scroll to trigger autoplay/focus behavior
-    return () => {
-      window.removeEventListener("scroll", handleAutoplayAndFocus);
-    };
-  }, []);
 
   const toggleLike = async (videoId: string, videoFileUrl: string) => {
     try {

@@ -258,6 +258,7 @@ export default function ProfilePage() {
                             : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] focus:outline-none"
                             }`}
                     >
+                        
                         {loading ? "Uploading..." : "Upload"}
                     </button>
                 </form>
