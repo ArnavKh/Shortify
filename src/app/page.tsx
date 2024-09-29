@@ -21,7 +21,7 @@ interface Comment {
 interface Video {
   _id: string;
   Videoname: string;
-  VideoFile: string; // AWS URL
+  VideoFile: string;
   Likes: number;
   CommentsEnglish: Comment[];
   CommentsHindi: Comment[];

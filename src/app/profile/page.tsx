@@ -13,7 +13,7 @@ import SentimentBarChart from "@/components/sentimentBarChart";
 interface Comment {
     username: string;
     comment: string;
-  }
+}
 
 interface Video {
     _id: string;
@@ -23,13 +23,13 @@ interface Video {
     CommentsEnglish: Comment[];
     CommentsHindi: Comment[];
     Tags: string[];
-  }
-  
-  interface SentimentCounts {
+}
+
+interface SentimentCounts {
     positive: number;
     neutral: number;
     negative: number;
-  }
+}
 
 // Header Component
 const handleLogout = () => {
@@ -44,7 +44,7 @@ export default function ProfilePage() {
     const [videoSentiment, setVideoSentiment] = useState<Record<string, SentimentCounts>>({});
 
 
-    
+
     const deleteVideo = async (videoId: string) => {
         try {
             await axios.post("/api/users/deleteVideo", { videoId });
@@ -74,14 +74,14 @@ export default function ProfilePage() {
 
         try {
             setLoading(true);
-            
+
             // Prepare FormData for file upload
             const formData = new FormData();
             formData.append("videoName", videoData.videoName);
             formData.append("tags", videoData.tags);
 
             formData.append("videoFile", videoData.videoFile);
-            
+
             const response = await axios.post("/api/users/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -120,63 +120,50 @@ export default function ProfilePage() {
             toast.error("Logout failed. Please try again.");
         }
     };
-    
-    // useEffect(() => {
-    //     async function fetchUsername() {
-    //         try {
-    //             const response = await axios.post("/api/users/getUserdata");
-    //             setVideos(response.data.videos);
-    //             setUsername(response.data.username);
-    //         } catch (error) {
-    //             console.error("Error fetching username:", error);
-    //             toast.error("Failed to fetch user data");
-    //         }
-    //     }
-    //     fetchUsername();
-    // }, []);
-    
+
+
     useEffect(() => {
         async function fetchUserData() {
-          try {
-            const response = await axios.post("/api/users/getUserdata");
-            setVideos(response.data.videos);
-            setUsername(response.data.username);
-    
-            for (const video of response.data.videos) {
-              const englishComments = video.CommentsEnglish
-                .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
-                .map((comment: Comment) => comment.comment);
-              const hindiComments = video.CommentsHindi
-                .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
-                .map((comment: Comment) => comment.comment);
-    
-              if (englishComments.length > 0 || hindiComments.length > 0) {
-                const sentimentResponse = await fetch("/api/users/sentiments", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ englishComments, hindiComments }),
-                });
-    
-                if (!sentimentResponse.ok) {
-                  throw new Error(`Failed to fetch sentiment analysis for video: ${video._id}`);
+            try {
+                const response = await axios.post("/api/users/getUserdata");
+                setVideos(response.data.videos);
+                setUsername(response.data.username);
+
+                for (const video of response.data.videos) {
+                    const englishComments = video.CommentsEnglish
+                        .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
+                        .map((comment: Comment) => comment.comment);
+                    const hindiComments = video.CommentsHindi
+                        .filter((comment: Comment | null) => comment && comment.comment.trim() !== "")
+                        .map((comment: Comment) => comment.comment);
+
+                    if (englishComments.length > 0 || hindiComments.length > 0) {
+                        const sentimentResponse = await fetch("/api/users/sentiments", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ englishComments, hindiComments }),
+                        });
+
+                        if (!sentimentResponse.ok) {
+                            throw new Error(`Failed to fetch sentiment analysis for video: ${video._id}`);
+                        }
+
+                        const sentimentData = await sentimentResponse.json();
+                        setVideoSentiment((prev) => ({ ...prev, [video._id]: sentimentData }));
+                    } else {
+                        setVideoSentiment((prev) => ({ ...prev, [video._id]: { positive: 0, neutral: 0, negative: 0 } }));
+                    }
                 }
-    
-                const sentimentData = await sentimentResponse.json();
-                setVideoSentiment((prev) => ({ ...prev, [video._id]: sentimentData }));
-              } else {
-                setVideoSentiment((prev) => ({ ...prev, [video._id]: { positive: 0, neutral: 0, negative: 0 } }));
-              }
+            } catch (error) {
+                console.error("Error fetching user data or sentiment analysis: ", error);
+                toast.error("Failed to fetch data");
             }
-          } catch (error) {
-            console.error("Error fetching user data or sentiment analysis: ", error);
-            toast.error("Failed to fetch data");
-          }
         }
-    
+
         fetchUserData();
-      }, []);
+    }, []);
 
     return (
         <main className="flex min-h-screen flex-col bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
@@ -228,10 +215,8 @@ export default function ProfilePage() {
 
 
                     {/* Input for Video File */}
-                    <div className="mb-4">
-                        {/* <label htmlFor="videoFile" className="block text-sm font-medium">
-                            Upload Video
-                        </label> */}
+                    <div className="mb-4 cursor-pointer">
+                        {/* Hidden File Input */}
                         <input
                             type="file"
                             id="videoFile"
@@ -242,10 +227,18 @@ export default function ProfilePage() {
                                     videoFile: file,
                                 }));
                             }}
-                            className="w-full p-2 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
-                            accept="video/*" // Ensure only video files are selected
+                            className="hidden" // Hides the input element
+                            accept="video/*"
                             required
                         />
+
+                        {/* Custom Button/Icon for Upload */}
+                        <label htmlFor="videoFile" className="flex items-center justify-center cursor-pointer border-2 p-2 rounded-lg mt-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <p className="pl-2">Upload Video</p>
+                        </label>
                     </div>
 
                     {/* Submit Button */}
@@ -258,7 +251,7 @@ export default function ProfilePage() {
                             : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] focus:outline-none"
                             }`}
                     >
-                        
+
                         {loading ? "Uploading..." : "Upload"}
                     </button>
                 </form>
