@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
 import { usePathname } from 'next/navigation'; // New import
+import SearchPage from '@/components/search';
 
 interface HeaderProps {
      onLogout: () => void;
@@ -96,6 +97,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               Recommended Videos
                          </button>
                     </Link>
+                    <SearchPage/>  
                     <Link href="" passHref>
                          <button
                               onClick={onLogout}
@@ -133,6 +135,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                    Recommended Videos
                               </button>
                          </Link>
+                         <SearchPage/>
                          <Link href="" passHref>
                               <button
                                    onClick={onLogout}
