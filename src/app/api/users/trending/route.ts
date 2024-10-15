@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
     await connect();
 
     // Fetch all videos from the collection
-    const videos = await Video.find({}).sort({ Likes: -1 }).limit(20);
-
+    const videos = await Video.find().sort({ Likes: -1 }).limit(20);
+    
     // Return the videos in JSON format
     return NextResponse.json({ videos }, { status: 200 });
   } catch (error) {

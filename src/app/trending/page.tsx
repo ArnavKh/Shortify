@@ -149,24 +149,6 @@ export default function TrendingVideos() {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchVideosAndLikedStatus = async () => {
-      try {
-        const videoResponse = await axios.get("/api/users/videos");
-        setVideos(videoResponse.data.videos);
-
-        const likedVideosResponse = await axios.get("/api/users/likedVideos");
-        setLikedVideoUrls(likedVideosResponse.data.videos || []);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching videos or liked videos:", error);
-        setLoading(false);
-      }
-    };
-    fetchVideosAndLikedStatus();
-  }, []);
-
   const onLogout = async () => {
     try {
       await axios.get("/api/users/logout");
@@ -183,6 +165,7 @@ export default function TrendingVideos() {
       try {
         const response = await axios.get("/api/users/trending");
         setVideos(response.data.videos);  // Assuming response contains the video data
+        
 
         const likedVideosResponse = await axios.get("/api/users/likedVideos");
         setLikedVideoUrls(likedVideosResponse.data.videos || []);

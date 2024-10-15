@@ -11,7 +11,7 @@ interface Video{
     _id:String,
     Videoname:String;
     VideoFile:String;
-    Tags:String[]
+    Tags:String
 }
 
 export default function UpdatePage(){
@@ -19,7 +19,7 @@ export default function UpdatePage(){
     // const router = useRouter();
     const [video, setVideo] = useState<Video | null>(null);
     const [Videoname, setVideoname] = useState("")
-    const [Tags, setTags] = useState<string[]>([]);
+    const [Tags, setTags] = useState("");
     
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function UpdatePage(){
           <input
             type="text"
             value={Tags}
-            onChange={(e) => setTags(e.target.value.split(",").map(tag => tag.trim()))}
+            onChange={(e) => setTags(e.target.value)}
             className="w-full p-2 mt-1 bg-gray-800 border border-gray-700 rounded"
           />
         </div>
