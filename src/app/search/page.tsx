@@ -1,15 +1,23 @@
 "use client";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Header from "../header/header";
+import Footer from "../footer/footer";
 
 interface Video {
     _id: string;
     VideoFile: string; // Use this for the video URL
 }
 
+const handleLogout = () => {
+    // Perform logout action here
+    console.log('Logging out...');
+};
+
 const SearchPage = () => {
+    const router = useRouter();
     const searchParams = useSearchParams(); // Get search params
     const query = searchParams.get('query'); // Get the query parameter from the URL
     const [searchResults, setSearchResults] = useState<Video[]>([]); // Specify the type of searchResults
@@ -37,15 +45,27 @@ const SearchPage = () => {
         }
     }, [query]);
 
-    if (loading) return <p>Loading...</p>;
+    const onLogout = async () => {
+        try {
+            await axios.get("/api/users/logout");
+            toast.success("Logout successful");
+            router.push("/login");
+        } catch (error: any) {
+            toast.error("Logout failed. Please try again.");
+        }
+    };
+
+    if (loading) return <p>Loading...</p>
 
     return (
-        <div className="flex min-h-screen flex-col bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
-            <h1 className="text-3xl font-bold mb-6 mt-24 text-center">Search Results for "{query}"</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        <div className="flex min-h-screen flex-col items-center bg-primary text-white p-0 m-0 font-textFont transition-all duration-500 overflow-x-auto">
+            <Header onLogout={onLogout} />
+
+            <h1 className="text-3xl font-bold mb-6 mt-24">Search Results for "{query}"</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {searchResults.length > 0 ? (
                     searchResults.map((video) => (
-                        <div key={video._id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                        <div key={video._id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
                             <video
                                 className="w-full max-w-sm h-full object-contain rounded-t-lg" // Adjust height here
                                 controls
@@ -58,6 +78,7 @@ const SearchPage = () => {
                     <p className="text-gray-400">No results found.</p>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };
