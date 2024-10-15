@@ -106,14 +106,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                         </svg>
                     </button>
                 </Link>
-                <Link href="/profile" passHref>
-                    <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/profile')}`} title="Profile">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none">
-                            <path d="M6.57757 15.4816C5.1628 16.324 1.45336 18.0441 3.71266 20.1966C4.81631 21.248 6.04549 22 7.59087 22H16.4091C17.9545 22 19.1837 21.248 20.2873 20.1966C22.5466 18.0441 18.8372 16.324 17.4224 15.4816C14.1048 13.5061 9.89519 13.5061 6.57757 15.4816Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" stroke-width="1.5" />
-                        </svg>
-                    </button>
-                </Link>
+
                 <Link href="/trending" passHref>
                     <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/trending')}`} title="Trending">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none">
@@ -121,13 +114,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                         </svg>
                     </button>
                 </Link>
-                <Link href="/likedVideos" passHref>
-                    <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/likedVideos')}`} title="Liked Videos">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
-                            <path d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                        </svg>
-                    </button>
-                </Link>
+
                 <Link href="/recommend" passHref>
                     <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/recommend')}`} title="Recommended Videos">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
@@ -136,6 +123,23 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             <path d="M10.0001 2.5L7.00012 7.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
                             <path d="M2.5 12C2.5 7.52166 2.5 5.28249 3.89124 3.89124C5.28249 2.5 7.52166 2.5 12 2.5C16.4783 2.5 18.7175 2.5 20.1088 3.89124C21.5 5.28249 21.5 7.52166 21.5 12C21.5 16.4783 21.5 18.7175 20.1088 20.1088C18.7175 21.5 16.4783 21.5 12 21.5C7.52166 21.5 5.28249 21.5 3.89124 20.1088C2.5 18.7175 2.5 16.4783 2.5 12Z" stroke="currentColor" stroke-width="1.5" />
                             <path d="M14.9531 14.8948C14.8016 15.5215 14.0857 15.9644 12.6539 16.8502C11.2697 17.7064 10.5777 18.1346 10.0199 17.9625C9.78934 17.8913 9.57925 17.7562 9.40982 17.57C9 17.1198 9 16.2465 9 14.5C9 12.7535 9 11.8802 9.40982 11.4299C9.57925 11.2438 9.78934 11.1087 10.0199 11.0375C10.5777 10.8654 11.2697 11.2936 12.6539 12.1498C14.0857 13.0356 14.8016 13.4785 14.9531 14.1052C15.0156 14.3639 15.0156 14.6361 14.9531 14.8948Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </Link>
+
+                <Link href="/likedVideos" passHref>
+                    <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/likedVideos')}`} title="Liked Videos">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
+                            <path d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </Link>
+
+                <Link href="/profile" passHref>
+                    <button className={`p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/profile')}`} title="Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none">
+                            <path d="M6.57757 15.4816C5.1628 16.324 1.45336 18.0441 3.71266 20.1966C4.81631 21.248 6.04549 22 7.59087 22H16.4091C17.9545 22 19.1837 21.248 20.2873 20.1966C22.5466 18.0441 18.8372 16.324 17.4224 15.4816C14.1048 13.5061 9.89519 13.5061 6.57757 15.4816Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" stroke-width="1.5" />
                         </svg>
                     </button>
                 </Link>
@@ -166,17 +170,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             <span className='pl-2'>Home</span>
                         </button>
                     </Link>
-                    <Link href="/profile" passHref>
-                        <button className='flex items-center'>
-                            <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/profile')}`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none">
-                                    <path d="M6.57757 15.4816C5.1628 16.324 1.45336 18.0441 3.71266 20.1966C4.81631 21.248 6.04549 22 7.59087 22H16.4091C17.9545 22 19.1837 21.248 20.2873 20.1966C22.5466 18.0441 18.8372 16.324 17.4224 15.4816C14.1048 13.5061 9.89519 13.5061 6.57757 15.4816Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" stroke-width="1.5" />
-                                </svg>
-                            </span>
-                            <span className='pl-2'>Profile</span>
-                        </button>
-                    </Link>
+
                     <Link href="/trending" passHref>
                         <button className='flex items-center'>
                             <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/trending')}`}>
@@ -188,16 +182,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
 
                         </button>
                     </Link>
-                    <Link href="/likedVideos" passHref>
-                        <button className='flex items-center'>
-                            <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/likedVideos')}`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
-                                    <path d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                </svg>
-                            </span>
-                            <span className='pl-2'>Liked Videos</span>
-                        </button>
-                    </Link>
+
                     <Link href="/recommend" passHref>
                         <button className='flex items-center'>
                             <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/recommend')}`}>
@@ -210,6 +195,29 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 </svg>
                             </span>
                             <span className='pl-2'>Recommended Videos</span>
+                        </button>
+                    </Link>
+
+                    <Link href="/likedVideos" passHref>
+                        <button className='flex items-center'>
+                            <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/likedVideos')}`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
+                                    <path d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                </svg>
+                            </span>
+                            <span className='pl-2'>Liked Videos</span>
+                        </button>
+                    </Link>
+
+                    <Link href="/profile" passHref>
+                        <button className='flex items-center'>
+                            <span className={`flex p-3 rounded-full hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] ${isActive('/profile')}`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#FFFFFF" fill="none">
+                                    <path d="M6.57757 15.4816C5.1628 16.324 1.45336 18.0441 3.71266 20.1966C4.81631 21.248 6.04549 22 7.59087 22H16.4091C17.9545 22 19.1837 21.248 20.2873 20.1966C22.5466 18.0441 18.8372 16.324 17.4224 15.4816C14.1048 13.5061 9.89519 13.5061 6.57757 15.4816Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <span className='pl-2'>Profile</span>
                         </button>
                     </Link>
 

@@ -174,7 +174,7 @@ export default function ProfilePage() {
             <div>
 
                 {/* <div className="myGradient lg:w-96 hidden md:block fixed"> */}
-                    <img src="/DoodleGraphic.svg" alt="" className=" h-full w-[26.7rem] object-cover fixed z-0" />
+                    <img src="/DoodleGraphic.svg" alt="" className="hidden lg:block h-full lg:w-[26.7rem] w-full object-cover fixed lg:top-0 z-0" />
                 {/* </div> */}
                 {/* Upload Videos Section */}
                 <div className="flex flex-col items-center justify-center h-auto lg:fixed lg:top-[30%] lg:translate-y-[-50] lg:left-0 lg:w-96 mt-[6rem] lg:mt-5 bg-secondary text-white p-5 lg:py-20 m-5 rounded-lg z-10">
