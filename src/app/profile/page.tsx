@@ -172,10 +172,8 @@ export default function ProfilePage() {
             <Header onLogout={onLogout} />
 
             <div>
+                <img src="/DoodleGraphic.svg" alt="" className="hidden lg:block h-full lg:w-[26.7rem] w-full object-cover fixed lg:top-0 z-0" />
 
-                {/* <div className="myGradient lg:w-96 hidden md:block fixed"> */}
-                    <img src="/DoodleGraphic.svg" alt="" className="hidden lg:block h-full lg:w-[26.7rem] w-full object-cover fixed lg:top-0 z-0" />
-                {/* </div> */}
                 {/* Upload Videos Section */}
                 <div className="flex flex-col items-center justify-center h-auto lg:fixed lg:top-[30%] lg:translate-y-[-50] lg:left-0 lg:w-96 mt-[6rem] lg:mt-5 bg-secondary text-white p-5 lg:py-20 m-5 rounded-lg z-10">
                     <h1 className="text-3xl font-bold mb-6">
@@ -184,9 +182,6 @@ export default function ProfilePage() {
                     <form className="flex flex-col justify-center w-full max-w-md p-6 rounded-lg">
                         {/* Input for Video Name */}
                         <div className="mb-4">
-                            {/* <label htmlFor="videoName" className="block text-sm font-medium">
-                            Video Name
-                        </label> */}
                             <input
                                 type="text"
                                 id="videoName"
