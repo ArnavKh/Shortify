@@ -423,7 +423,7 @@ export default function recommend() {
                       <div className="mt-4 flex flex-col justify-end">
                         <h3 className="text-lg font-semibold">Comments</h3>
                         <select
-                          className="bg-primary text-white my-2 p-2 rounded"
+                          className="bg-secondary text-white my-2 p-2 rounded"
                           onChange={(e) =>
                             setSelectedLanguage(e.target.value as "English" | "Hindi")
                           }

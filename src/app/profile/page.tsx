@@ -171,94 +171,100 @@ export default function ProfilePage() {
 
             <Header onLogout={onLogout} />
 
-            {/* Upload Videos Section */}
-            <div className="flex flex-col items-center justify-center h-auto lg:fixed lg:top-20 lg:left-0 lg:w-96 mt-[6rem] lg:mt-5 bg-secondary text-white p-5 lg:py-20 m-5 rounded-lg">
-                <h1 className="text-3xl font-bold mb-6">
-                    {loading ? "Processing..." : "Upload Video"}
-                </h1>
-                <form className="flex flex-col justify-center w-full max-w-md bg-secondary p-6 rounded-lg">
-                    {/* Input for Video Name */}
-                    <div className="mb-4">
-                        {/* <label htmlFor="videoName" className="block text-sm font-medium">
+            <div>
+
+                {/* <div className="myGradient lg:w-96 hidden md:block fixed"> */}
+                    <img src="/DoodleGraphic.svg" alt="" className=" h-full w-[26.7rem] object-cover fixed z-0" />
+                {/* </div> */}
+                {/* Upload Videos Section */}
+                <div className="flex flex-col items-center justify-center h-auto lg:fixed lg:top-[30%] lg:translate-y-[-50] lg:left-0 lg:w-96 mt-[6rem] lg:mt-5 bg-secondary text-white p-5 lg:py-20 m-5 rounded-lg z-10">
+                    <h1 className="text-3xl font-bold mb-6">
+                        {loading ? "Processing..." : "Upload Video"}
+                    </h1>
+                    <form className="flex flex-col justify-center w-full max-w-md p-6 rounded-lg">
+                        {/* Input for Video Name */}
+                        <div className="mb-4">
+                            {/* <label htmlFor="videoName" className="block text-sm font-medium">
                             Video Name
                         </label> */}
-                        <input
-                            type="text"
-                            id="videoName"
-                            value={videoData.videoName}
-                            onChange={(e) =>
-                                setVideoData({ ...videoData, videoName: e.target.value })
-                            }
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
-                            placeholder="Video Name"
-                            required
-                        />
-                    </div>
+                            <input
+                                type="text"
+                                id="videoName"
+                                value={videoData.videoName}
+                                onChange={(e) =>
+                                    setVideoData({ ...videoData, videoName: e.target.value })
+                                }
+                                className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
+                                placeholder="Video Title"
+                                required
+                            />
+                        </div>
 
-                    {/* Input Tags */}
-                    <div className="mb-4">
-                        {/* <label htmlFor="tags" className="block text-sm font-medium">
+                        {/* Input Tags */}
+                        <div className="mb-4">
+                            {/* <label htmlFor="tags" className="block text-sm font-medium">
                             Tags
-                        </label> */}
-                        <input
-                            type="text"
-                            id="tags"
-                            value={videoData.tags}
-                            onChange={(e) =>
-                                setVideoData({ ...videoData, tags: e.target.value })
-                            }
-                            className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
-                            placeholder="Tags"
-                            required
-                        />
-                    </div>
+                            </label> */}
+                            <input
+                                type="text"
+                                id="tags"
+                                value={videoData.tags}
+                                onChange={(e) =>
+                                    setVideoData({ ...videoData, tags: e.target.value })
+                                }
+                                className="w-full p-2 border-b-2 border-gray-300 bg-secondary  focus:outline-none focus:border-[#F84E9D]"
+                                placeholder="Tags"
+                                required
+                            />
+                        </div>
 
 
-                    {/* Input for Video File */}
-                    <div className="mb-4 cursor-pointer">
-                        {/* Hidden File Input */}
-                        <input
-                            type="file"
-                            id="videoFile"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                const file = e.target.files?.[0] || null;
-                                setVideoData((prevState) => ({
-                                    ...prevState,
-                                    videoFile: file,
-                                }));
-                            }}
-                            className="hidden" // Hides the input element
-                            accept="video/*"
-                            required
-                        />
+                        {/* Input for Video File */}
+                        <div className="mb-4 cursor-pointer">
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id="videoFile"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const file = e.target.files?.[0] || null;
+                                    setVideoData((prevState) => ({
+                                        ...prevState,
+                                        videoFile: file,
+                                    }));
+                                }}
+                                className="hidden" // Hides the input element
+                                accept="video/*"
+                                required
+                            />
 
-                        {/* Custom Button/Icon for Upload */}
-                        <label htmlFor="videoFile" className="flex items-center justify-center cursor-pointer border-2 p-2 rounded-lg mt-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg>
-                            <p className="pl-2">Upload Video</p>
-                        </label>
-                    </div>
+                            {/* Custom Button/Icon for Upload */}
+                            <label htmlFor="videoFile" className="flex items-center justify-center cursor-pointer border-2 p-2 rounded-lg mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                </svg>
+                                <p className="pl-2">Add Video</p>
+                            </label>
+                        </div>
 
-                    {/* Submit Button */}
-                    <button
-                        type="button"
-                        onClick={onUpload}
-                        disabled={buttonDisabled}
-                        className={`w-full p-2 mt-4 text-white rounded-lg ${buttonDisabled
-                            ? "bg-primary focus:outline-none cursor-not-allowed"
-                            : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] focus:outline-none"
-                            }`}
-                    >
+                        {/* Submit Button */}
+                        <button
+                            type="button"
+                            onClick={onUpload}
+                            disabled={buttonDisabled}
+                            className={`w-full p-2 mt-4 text-white rounded-lg ${buttonDisabled
+                                ? "bg-primary focus:outline-none cursor-not-allowed"
+                                : "myGradient hover:bg-gradient-to-tl hover:from-[#F84E9D] hover:to-[#FF7375] focus:outline-none"
+                                }`}
+                        >
 
-                        {loading ? "Uploading..." : "Upload"}
-                    </button>
-                </form>
+                            {loading ? "Uploading..." : "Upload"}
+                        </button>
+                    </form>
+                </div>
             </div>
 
             {/* Uploaded Videos Section */}
-            <div className="lg:ml-[25.5rem] p-5 flex flex-col gap-6 lg:mt-[5rem]">
+            <div className="lg:ml-[25.5rem] p-5 flex flex-col gap-6 lg:mt-[5rem] z-10">
                 {videos.length > 0 ? (
                     videos.map((video) => (
                         <div key={video._id} className="bg-secondary p-4 rounded-lg h-auto flex">
