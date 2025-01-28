@@ -4,13 +4,14 @@ Shortify is an innovative social media application designed for sharing and disc
 
 ---
 
+### All the files are in the Secondary branch.
+
 ## Installation and Running the Application
 
 ### Prerequisites:
 - Ensure you have Node.js and Python installed on your system.
 - MongoDB setup for storing user and video data.
 - Git installed to clone the repository.
-- All the files are in the Secondary branch.
 
 ### Steps to Install and Run:
 1. Clone the repository:
